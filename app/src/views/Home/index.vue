@@ -92,18 +92,18 @@ export default {
     return {
       isSearch: false,
       isLoading: false,
-      myisloading: false
+      myisloading: true
     };
   },
   mounted() {
-    // this.onloading();
+    this.onloading();
   },
   methods: {
-    // onloading() {
-    //   setTimeout(() => {
-    //     this.myisloading = false;
-    //   }, 3000);
-    // },
+    onloading() {
+      setTimeout(() => {
+        this.myisloading = false;
+      }, 3000);
+    },
     // 点击隐藏
     handleSearchHide() {
       this.isSearch = true;
