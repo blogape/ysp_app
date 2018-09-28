@@ -1,0 +1,123 @@
+<template>
+    <!-- 主题模板 -->
+    <div class="recipemplate">
+    <div class="main">
+        <div class="left">
+        <img src="https://image.hongbeibang.com/Fs_CVXAhguXhW-E8fboesra2MQ2V?1280X853&imageView2/1/w/600/h/348"/>
+        </div>
+        <div class="right">
+            <!-- 标题 -->
+            <div class="title">
+                无花果杯子蛋糕
+            </div>
+            <!-- 标签 -->
+            <div class="label">
+                <ul>
+                    <li>菲力</li>
+                    <li>全熟</li>
+                    <li>1.8cm</li>
+                </ul>
+            </div>
+            <!-- 作者 -->
+            <div class="author">
+                寒若然 <span>已有2人做过</span>
+            </div>
+            <!-- 收藏与浏览 -->
+            <div class="collection">
+                <ul>
+                    <li><i class='icon iconfont icon-chakan'></i>233</li>
+                    <li><i class='icon iconfont icon-wujiaoxingkong'></i>233</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    </div>
+</template>
+
+<script>
+export default {};
+</script>
+
+<style lang='less' scoped>
+.recipemplate {
+  width: 100%;
+  margin-top: 1rem;
+  background-color: #fff;
+  height: 12rem;
+  border-radius: 3px;
+  box-shadow: 0.1rem 0.1rem 0.1rem rgba(0, 0, 0, 0.2);
+  .main {
+    display: flex;
+    width: 100%;
+    height: 12rem;
+    .left {
+      width: 15rem;
+      img {
+        height: 100%;
+        width: 100%;
+      }
+    }
+    .right {
+      padding: 1rem 2rem;
+      flex: 1;
+      .title {
+        height: 3rem;
+        overflow: hidden;
+        line-height: 3rem;
+        font-size: 1.3rem;
+        color: #4a4a4a;
+      }
+      .label {
+        font-size: 1rem;
+        height: 1.5rem;
+        display: block;
+        width: 100%;
+        ul {
+          li {
+            overflow: hidden;
+            float: left;
+            color: #898989;
+            margin-right: 1rem;
+            font-size: 1.2rem;
+          }
+        }
+      }
+      .author {
+        height: 2rem;
+        line-height: 2rem;
+        display: block;
+          margin-top: 0.3rem;
+        color: #4a4a4a;
+        font-size: 1.3rem;
+        span {
+          color: #898989;
+          margin-left: 0.5rem;
+          font-size: 1rem;
+        }
+      }
+      .collection {
+          margin-top: 0.3rem;
+        ul {
+            display: flex;
+          li {
+            height: 2rem;
+            font-size: 1rem;
+            line-height: 2rem;
+            margin-right: 1.5rem;
+            color: #898989;
+            i {
+              font-size: 1.6rem;
+              margin-right: 0.5rem;
+              color: #898989;
+              float: left;
+            }
+          }
+           li:last-child i{
+                font-size: 1.2rem;
+           }
+        }
+      }
+    }
+  }
+}
+</style>

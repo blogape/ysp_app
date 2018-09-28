@@ -1,6 +1,6 @@
 import axios from "axios";
 
-axios.defaults.baseURL = "http://192.168.1.80";
+axios.defaults.baseURL = "https://recipe.eg-live.com/api/";
 
 // response interceptor
 axios.interceptors.response.use(
