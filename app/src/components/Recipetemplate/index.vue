@@ -3,12 +3,12 @@
     <div class="recipemplate">
     <div class="main">
         <div class="left">
-        <img src="https://image.hongbeibang.com/Fs_CVXAhguXhW-E8fboesra2MQ2V?1280X853&imageView2/1/w/600/h/348"/>
+        <img :src="data.coverimg"/>
         </div>
         <div class="right">
             <!-- 标题 -->
             <div class="title">
-                无花果杯子蛋糕
+                {{data.title}}
             </div>
             <!-- 标签 -->
             <div class="label">
@@ -20,13 +20,13 @@
             </div>
             <!-- 作者 -->
             <div class="author">
-                寒若然 <span>已有2人做过</span>
+                {{data.nickname}} <span>已有{{data.cookiedCount}}人做过</span>
             </div>
             <!-- 收藏与浏览 -->
             <div class="collection">
                 <ul>
-                    <li><i class='icon iconfont icon-chakan'></i>233</li>
-                    <li><i class='icon iconfont icon-wujiaoxingkong'></i>233</li>
+                    <li><i class='icon iconfont icon-chakan'></i>{{data.readCount}}</li>
+                    <li><i class='icon iconfont icon-wujiaoxingkong'></i>{{data.collectCount}}</li>
                 </ul>
             </div>
         </div>
@@ -36,7 +36,13 @@
 </template>
 
 <script>
-export default {};
+export default {
+  props:{
+    data:{
+      type:Object
+    }
+  }
+};
 </script>
 
 <style lang='less' scoped>

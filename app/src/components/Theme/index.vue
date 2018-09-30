@@ -4,22 +4,28 @@
     <div class="main">
     <!-- 标题 -->
     <div class='title'>
-        在家只能吃冷冻牛排？这样吃好像去了趟澳洲…
+        {{data.title}}
     </div>
     <!-- 描述 -->
     <div class="describe">
-        无需解冻，简单调味，轻松做出西餐厅的美味牛排
+        {{data.description}}
     </div>
     <!-- 图片 -->
     <div class="img">
-        <img src='https://image.hongbeibang.com/FqxWw1V361ITZqb3r0ibewUm4Z4_?640X490&imageView2/1/w/600/h/348'/>
+        <img :src='data.coverimg'/>
     </div>
     </div>
     </div>
 </template>
 
 <script>
-export default {};
+export default {
+  props: {
+    data: {
+      type: Object
+    }
+  }
+};
 </script>
 
 <style lang='less' scoped>

@@ -4,21 +4,27 @@
         <div class="main">
             <div class="left">
                 <div class="title">
-                    小黄人蛋挞
+                    {{data.title}}
                 </div>
                 <div class="describle">
-                    春寒料峭，食之有方
-                </div>
+                    {{data.description}}
+                  </div>
             </div>
             <div class="right">
-                <img src="https://image.hongbeibang.com/FsGVb-bFubhGdLk7LrXPyqdl3gZ4?1280X958&imageView2/1/w/600/h/348"/>
+                <img :src="data.image"/>
             </div>
         </div>
     </div>
 </template>
 
 <script>
-export default {};
+export default {
+  props: {
+    data: {
+      type: Object
+    }
+  }
+};
 </script>
 
 <style lang='less' scoped>
@@ -39,6 +45,9 @@ export default {};
         color: #4a4a4a;
         margin-top: 3rem;
         line-height: 3rem;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
         text-align: center;
         font-size: 1.4rem;
       }
@@ -46,6 +55,9 @@ export default {};
         color: #4a4a4a;
         text-align: center;
         font-size: 1.2rem;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
       }
     }
     .right {

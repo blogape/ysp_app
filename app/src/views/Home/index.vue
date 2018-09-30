@@ -16,10 +16,7 @@
     <!-- banner图 -->
     <div class="banner">
   <van-swipe :autoplay="3000" :touchable="true">
-    <van-swipe-item><img src="http://m.360buyimg.com/mobilecms/jfs/t1/2149/7/8648/101849/5ba9e070E518446eb/d51a88c0636b0ee2.jpg!cr_1125x549_0_72"/></van-swipe-item>
-    <van-swipe-item><img src="http://m.360buyimg.com/mobilecms/jfs/t1/4748/14/9314/97451/5bac587eE329a9b48/cbb6c07075c3e7da.jpg!cr_1125x549_0_72"/></van-swipe-item>
-    <van-swipe-item><img src="http://m.360buyimg.com/mobilecms/s1125x690_jfs/t1/5028/15/6817/158872/5ba4a352E6b8bee61/b89df411d63b5c72.jpg!cr_1125x549_0_72!q70.jpg.dpg"/></van-swipe-item>
-    <van-swipe-item><img src="http://m.360buyimg.com/mobilecms/s1125x690_jfs/t1/4378/40/2293/98297/5b963ac9E0432a7a3/0a560cdba5b6498d.jpg!cr_1125x549_0_72!q70.jpg.dpg"/></van-swipe-item>
+    <van-swipe-item v-for='(item,key) in bannerdata' :key='key'><img :src="item.image"/></van-swipe-item>
   </van-swipe>
     </div>
     <!-- 导航 -->
@@ -53,18 +50,20 @@
     </div>
     <!--食谱内容 -->
     <div class="content">
+      <div class="main" v-for='(item,key) in elementdata' :key='key'>
       <!-- 食谱软文 -->
-      <template>
-      <Article></Article>
+      <template v-if='item.type===1'>
+      <Article :data='item.data'></Article>
       </template>
       <!-- 食谱详情 -->
-       <template>
-       <Recipetemplate></Recipetemplate>
+       <template v-if='item.type===0'>
+       <Recipetemplate :data='item.data'></Recipetemplate>
       </template>
         <!-- 食谱主题 -->
-      <template>
-       <Theme></Theme>
+      <template v-if='item.type===2'>
+       <Theme :data='item.data'></Theme>
       </template>
+      </div>
     </div>
     </van-pull-refresh>
     <Loading v-if='myisloading'></Loading>
@@ -79,7 +78,7 @@ import Theme from "../../components/Theme/";
 import Loading from "../../components/Loading/";
 import Recipetemplate from "../../components/Recipetemplate/";
 import Search from "../../components/Search/";
-import { homebanner } from "../../services/api.js";
+import { homebanner, getElement } from "../../services/api.js";
 export default {
   components: {
     Article,
@@ -92,12 +91,15 @@ export default {
     return {
       isSearch: false,
       isLoading: false,
-      myisloading: true
+      myisloading: true,
+      bannerdata: "",
+      elementdata: ""
     };
   },
   mounted() {
     this.onloading();
     this.getBannerData();
+    this.getElement();
   },
   methods: {
     onloading() {
@@ -105,16 +107,21 @@ export default {
         this.myisloading = false;
       }, 500);
     },
-
     // 获取轮播图数据
     async getBannerData() {
       let dataRes = await homebanner();
-      console.log(dataRes);
+      this.bannerdata = dataRes.data.list;
+    },
+    // 获取食谱视图内容
+    async getElement() {
+      let elementData = await getElement();
+      console.log(elementData);
+      this.elementdata = elementData.data;
     },
     // 点击隐藏
     handleSearchHide() {
       this.isSearch = true;
-      },
+    },
     // 弹出搜索页面
     handleSearch() {
       this.$refs.isSearch.show = true;
@@ -184,6 +191,8 @@ export default {
   }
   .banner {
     padding: 0 1rem 0.5rem 1rem;
+    border-radius: 3px;
+    overflow: hidden;
     background-color: #fff;
     img {
       border-radius: 5px;
