@@ -1,19 +1,48 @@
 <template>
     <!-- 搜索 -->
-        <van-popup v-model="isshow" position="bottom" :overlay="false" class="searchpopup">
+        <van-popup v-model="show" position="bottom" :overlay="false" class="searchpopup">
         <div class="search">
         <div class="header">
             <span class="icon iconfont icon-fanhui" @click='handleback'></span>
             <div class="input">
                 <i class="icon iconfont icon-search_001"></i>
-                <input type="text"/>
+                <input type="text" placeholder="搜索食谱/食材/问题" autofocus="autofocus" v-focus />
             </div>
-            <span>搜索</span>
+            <span  >搜索</span>
         </div>
         <!-- 最近搜索 -->
         <div class="recentsearch">
             <div class="title">
-            
+            最近搜索 <i class="icon iconfont icon-shanchu"></i>
+            </div>
+            <div class="content">
+                    <ul>
+                        <li ><a href=''>牛肉</a></li>
+                        <li><a href=''>猪肉</a></li>
+                        <li><a href=''>牛排</a></li>
+                        <li><a href=''>鸡肉</a></li>
+                        <li><a href=''>羊肉</a></li>
+                        <li><a href=''>狗欧</a></li>
+                    </ul>
+            </div>
+        </div>
+        <!-- 热门搜索 -->
+        <div class="recentsearch hotsearch">
+            <div class="title">
+            热门搜索
+            </div>
+            <div class="content">
+                    <ul>
+                        <li><a href=''>牛肉</a></li>
+                        <li><a href=''>猪肉</a></li>
+                        <li><a href=''>牛排</a></li>
+                        <li><a href=''>鸡肉</a></li>
+                        <li><a href=''>猪肉</a></li>
+                        <li><a href=''>牛排</a></li>
+                        <li><a href=''>鸡肉</a></li>
+                        <li><a href=''>羊肉</a></li>
+                        <li><a href=''>狗欧</a></li>
+                    </ul>
             </div>
         </div>
     </div>
@@ -22,21 +51,27 @@
 
 <script>
 export default {
-  props: {
-    isshow: {
-      type: Boolean,
-      required: true
+  data() {
+    return {
+      show: false,
+      focusState: false
+    };
+  },
+  directives: {
+    focus: {
+      // 指令的定义
+      inserted: function(el) {
+        el.focus();
+      }
     }
   },
-  data() {
-    return {};
-  },
   methods: {
+    // 返回点击关闭搜索
     handleback() {
-      this.isshow = false;
+      this.show = false;
     },
-    handleShow() {
-      this.isshow = true;
+    handleClick() {
+      // this.inserted();
     }
   },
   computed: {}
@@ -71,24 +106,62 @@ export default {
       flex: 1;
       position: relative;
       padding: 0 0.8rem;
-      // border: 1px solid red;
       input {
         width: 100%;
         margin-top: 0.75rem;
         background-color: #f5f6f8;
-        font-size: 1.4rem;
+        font-size: 1.2rem;
         height: 3rem;
+        line-height: 3rem;
         text-indent: 4rem;
         color: #4a4a4a;
         outline: none;
-        // border: 1px solid red;
       }
       i {
         position: absolute;
         top: 1.5rem;
+        vertical-align: middle;
         left: 2rem;
         color: #9d9d9d;
         font-size: 1.8rem;
+      }
+    }
+  }
+  .hotsearch {
+    margin-top: 5rem !important;
+  }
+  .recentsearch {
+    width: 100%;
+    margin-top: 1rem;
+    color: #999999;
+    line-height: 3rem;
+    .title {
+      font-size: 1.2rem;
+      text-align: left;
+      height: 3rem;
+      text-indent: 1.5rem;
+      width: 100%;
+      i {
+        margin-right: 1.5rem;
+        float: right;
+        font-size: 2rem;
+      }
+    }
+    .content {
+      overflow: hidden;
+      ul {
+        li {
+          float: left;
+          overflow: hidden;
+          margin-top: 1rem;
+          margin-left: 1.2rem;
+          a {
+            border-radius: 5px;
+            padding: 0.5rem 1.2rem;
+            background-color: #f5f6f8;
+            font-size: 1.2rem;
+          }
+        }
       }
     }
   }

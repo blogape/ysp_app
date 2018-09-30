@@ -31,6 +31,7 @@
             </div>
         </div>
     </div>
+   
     </div>
 </template>
 
@@ -42,10 +43,11 @@ export default {};
 .recipemplate {
   width: 100%;
   margin-top: 1rem;
+  overflow: hidden;
   background-color: #fff;
   height: 12rem;
   border-radius: 3px;
-  box-shadow: 0.1rem 0.1rem 0.1rem rgba(0, 0, 0, 0.2);
+  // box-shadow: 0.1rem 0.1rem 0.1rem rgba(0, 0, 0, 0.2);
   .main {
     display: flex;
     width: 100%;
@@ -64,7 +66,7 @@ export default {};
         height: 3rem;
         overflow: hidden;
         line-height: 3rem;
-        font-size: 1.3rem;
+        font-size: 1.5rem;
         color: #4a4a4a;
       }
       .label {
@@ -86,7 +88,7 @@ export default {};
         height: 2rem;
         line-height: 2rem;
         display: block;
-          margin-top: 0.3rem;
+        margin-top: 0.3rem;
         color: #4a4a4a;
         font-size: 1.3rem;
         span {
@@ -96,9 +98,9 @@ export default {};
         }
       }
       .collection {
-          margin-top: 0.3rem;
+        margin-top: 0.3rem;
         ul {
-            display: flex;
+          display: flex;
           li {
             height: 2rem;
             font-size: 1rem;
@@ -112,9 +114,9 @@ export default {};
               float: left;
             }
           }
-           li:last-child i{
-                font-size: 1.2rem;
-           }
+          li:last-child i {
+            font-size: 1.2rem;
+          }
         }
       }
     }

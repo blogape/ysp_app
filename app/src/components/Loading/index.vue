@@ -25,8 +25,8 @@ export default {};
     width: 100%;
     text-align: center;
     img {
-     margin-top: 15rem;
-     height: 30rem;
+      margin-top: 15rem;
+      height: 30rem;
     }
   }
 }

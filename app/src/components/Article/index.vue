@@ -28,7 +28,6 @@ export default {};
   margin-top: 1rem;
   background-color: #fff;
   height: 12rem;
-  box-shadow: 0.1rem 0.1rem 0.1rem rgba(0, 0, 0, 0.2);
   .main {
     display: flex;
     height: 12rem;

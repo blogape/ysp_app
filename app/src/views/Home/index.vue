@@ -16,38 +16,38 @@
     <!-- banner图 -->
     <div class="banner">
   <van-swipe :autoplay="3000" :touchable="true">
-    <van-swipe-item><img src="//m.360buyimg.com/mobilecms/jfs/t1/2149/7/8648/101849/5ba9e070E518446eb/d51a88c0636b0ee2.jpg!cr_1125x549_0_72"/></van-swipe-item>
-    <van-swipe-item><img src="//m.360buyimg.com/mobilecms/jfs/t1/4748/14/9314/97451/5bac587eE329a9b48/cbb6c07075c3e7da.jpg!cr_1125x549_0_72"/></van-swipe-item>
-    <van-swipe-item><img src="//m.360buyimg.com/mobilecms/s1125x690_jfs/t1/5028/15/6817/158872/5ba4a352E6b8bee61/b89df411d63b5c72.jpg!cr_1125x549_0_72!q70.jpg.dpg"/></van-swipe-item>
-    <van-swipe-item><img src="//m.360buyimg.com/mobilecms/s1125x690_jfs/t1/4378/40/2293/98297/5b963ac9E0432a7a3/0a560cdba5b6498d.jpg!cr_1125x549_0_72!q70.jpg.dpg"/></van-swipe-item>
+    <van-swipe-item><img src="http://m.360buyimg.com/mobilecms/jfs/t1/2149/7/8648/101849/5ba9e070E518446eb/d51a88c0636b0ee2.jpg!cr_1125x549_0_72"/></van-swipe-item>
+    <van-swipe-item><img src="http://m.360buyimg.com/mobilecms/jfs/t1/4748/14/9314/97451/5bac587eE329a9b48/cbb6c07075c3e7da.jpg!cr_1125x549_0_72"/></van-swipe-item>
+    <van-swipe-item><img src="http://m.360buyimg.com/mobilecms/s1125x690_jfs/t1/5028/15/6817/158872/5ba4a352E6b8bee61/b89df411d63b5c72.jpg!cr_1125x549_0_72!q70.jpg.dpg"/></van-swipe-item>
+    <van-swipe-item><img src="http://m.360buyimg.com/mobilecms/s1125x690_jfs/t1/4378/40/2293/98297/5b963ac9E0432a7a3/0a560cdba5b6498d.jpg!cr_1125x549_0_72!q70.jpg.dpg"/></van-swipe-item>
   </van-swipe>
     </div>
     <!-- 导航 -->
     <div class="nav">
       <ul>
         <li>
-          <a href="#">
+            <router-link to='/category'>
           <img src="../../assets/images/icon_classify.png"/>
           <span>食谱分类</span>
-           </a>
+          </router-link>       
         </li>
         <li>
-          <a href="#">
+            <router-link to='/hotrecipe'>
           <img src="../../assets/images/icon_hot.png"/>
            <span>热门食谱</span>
-           </a>
+          </router-link>       
         </li>
         <li>
-          <a href="#">
-          <img src="../../assets/images/icon_recipe_niupa.png"/>
+            <router-link to='/steakrecipe'>
+            <img src="../../assets/images/icon_recipe_niupa.png"/>
           <span>牛排机食谱</span>
-           </a>
-        </li>
+          </router-link>       
+            </li>
          <li>
-          <a href="#">
+         <router-link to='/breadrecipe'>
           <img src="../../assets/images/icon_recipe_mianbao.png"/>
             <span>面包机食谱</span>
-           </a>
+          </router-link>       
         </li>
       </ul>
     </div>
@@ -69,17 +69,17 @@
     </van-pull-refresh>
     <Loading v-if='myisloading'></Loading>
     <!-- 弹出搜索页面-->
-      <Search :isshow='isSearch'></Search>
+      <Search  ref='isSearch'></Search>
   </div>
 </template>
 
 <script>
-import { Swipe, SwipeItem } from "vant";
 import Article from "../../components/Article/";
 import Theme from "../../components/Theme/";
 import Loading from "../../components/Loading/";
 import Recipetemplate from "../../components/Recipetemplate/";
 import Search from "../../components/Search/";
+import { homebanner } from "../../services/api.js";
 export default {
   components: {
     Article,
@@ -97,21 +97,27 @@ export default {
   },
   mounted() {
     this.onloading();
+    this.getBannerData();
   },
   methods: {
     onloading() {
       setTimeout(() => {
         this.myisloading = false;
-      }, 3000);
+      }, 500);
+    },
+
+    // 获取轮播图数据
+    async getBannerData() {
+      let dataRes = await homebanner();
+      console.log(dataRes);
     },
     // 点击隐藏
     handleSearchHide() {
       this.isSearch = true;
-      // this.show = false;
-    },
+      },
     // 弹出搜索页面
     handleSearch() {
-      this.isSearch = true;
+      this.$refs.isSearch.show = true;
     },
     // 下拉刷新
     onRefresh() {
