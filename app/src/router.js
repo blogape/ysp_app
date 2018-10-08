@@ -3,15 +3,15 @@ import Router from "vue-router";
 Vue.use(Router);
 
 export default new Router({
-  mode: "history",
+  // mode: "history",
   base: process.env.BASE_URL,
   routes: [
     {
-      path: "/",
+      path: "/nmenu",
       meta: {
         title: "首页"
       },
-      name:'Index',
+      // name:'Index',
       component: resolve => require(["./views/Home/index.vue"], resolve)
     },
     {
@@ -19,7 +19,7 @@ export default new Router({
       meta: {
         title: "牛排机食谱"
       },
-      name:'Index',
+      // name:'Index',
       component: resolve => require(["./views/steakRecipe/index.vue"], resolve)
     },
     {
@@ -27,7 +27,7 @@ export default new Router({
       meta: {
         title: "面包机食谱"
       },
-      name:'BreadRecipe',
+      // name:'BreadRecipe',
       component: resolve => require(["./views/BreadRecipe/index.vue"], resolve)
     },
     {
@@ -35,7 +35,7 @@ export default new Router({
       meta: {
         title: "食谱分类"
       },
-      name:'Category',
+      // name:'Category',
       component: resolve => require(["./views/Category/index.vue"], resolve)
     },
     {
@@ -43,9 +43,33 @@ export default new Router({
       meta: {
         title: "热门食谱"
       },
-      name:'Hotrecipe',
+      // name:'Hotrecipe',
       component: resolve => require(["./views/HotRecipe/index.vue"], resolve)
     },
+    {
+      path: "/product/:id",
+      name:'Product',
+      meta: {
+        title: "食谱详情"
+      },
+      component: resolve => require(["./views/Product/index.vue"], resolve)
+    },
+    {
+      path: "/article/:id",
+      name:'Article',
+      meta: {
+        title: "食谱软文"
+      },
+      component: resolve => require(["./views/Article/index.vue"], resolve)
+    },
+    {
+      path: "/themrecipe/:id",
+      name:'Themrecipe',
+      meta: {
+        title: "主题食谱"
+      },
+      component: resolve => require(["./views/ThemeRecipe/index.vue"], resolve)
+    }
     // {
     //   path: "/about",
     //   name: "about",

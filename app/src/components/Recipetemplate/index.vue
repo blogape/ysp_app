@@ -1,6 +1,6 @@
 <template>
-    <!-- 主题模板 -->
-    <div class="recipemplate">
+    <!-- 食谱详情 -->
+    <router-link :to="({name:'Product',params:{id:data.id}})" class="recipemplate">
     <div class="main">
         <div class="left">
         <img :src="data.coverimg"/>
@@ -32,8 +32,7 @@
         </div>
     </div>
    
-    </div>
-</template>
+</router-link></template>
 
 <script>
 export default {
@@ -49,6 +48,7 @@ export default {
 .recipemplate {
   width: 100%;
   margin-top: 1rem;
+  display: inline-block;
   overflow: hidden;
   background-color: #fff;
   height: 12rem;

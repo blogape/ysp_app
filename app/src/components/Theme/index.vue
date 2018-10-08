@@ -1,6 +1,6 @@
 <template>
     <!-- 主题模板 -->
-    <div class="themetemplate">
+    <router-link :to="({name:'Themrecipe',params:{id:data.id}})" class="themetemplate">
     <div class="main">
     <!-- 标题 -->
     <div class='title'>
@@ -15,7 +15,7 @@
         <img :src='data.coverimg'/>
     </div>
     </div>
-    </div>
+</router-link> 
 </template>
 
 <script>
@@ -31,6 +31,7 @@ export default {
 <style lang='less' scoped>
 .themetemplate {
   width: 100%;
+  display: inline-block;
   padding-top: 1rem;
   border-radius: 3px;
   margin-top: 1rem;

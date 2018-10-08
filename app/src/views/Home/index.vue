@@ -124,6 +124,7 @@ export default {
     },
     // 弹出搜索页面
     handleSearch() {
+      document.body.scrollTop = 0;
       this.$refs.isSearch.show = true;
     },
     // 下拉刷新

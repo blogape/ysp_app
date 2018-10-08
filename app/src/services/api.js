@@ -15,3 +15,12 @@ export function getElement(){
         method:'get'
     })
 }
+
+// 食谱详情
+
+export function product(id){
+    return request({
+        url:'/api/search-service/recipe/recipeDetail?recipeId='+id,
+        method:'get'
+    })
+}

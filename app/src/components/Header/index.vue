@@ -1,13 +1,12 @@
 <template>
  <div class="header">
-    <div class="main">
+    <div class="main" >
     <span class="icon iconfont icon-fanhui" @click='handleBack'></span>
-    <slot></slot>
+    <slot ></slot>
     <i class="icon iconfont icon-sousuo" @click='handleShow'></i>
  </div>
    <!-- 弹出搜索页面-->
-              <Search  ref='isSearch' class="searchbox"></Search>
-
+   <Search  ref='isSearch' class="searchbox"></Search>
 </div>
 
 </template>
@@ -18,35 +17,38 @@ export default {
   components: {
     Search
   },
+  mounted () {
+  },
   methods: {
     handleBack() {
       this.$router.go(-1);
     },
     handleShow() {
       this.$refs.isSearch.show = true;
-    }
-  }
+    },
+    
+  },
+
 };
 </script>
 
 <style lang='less' scoped>
 .header {
-    padding-bottom: 4.5rem;
-    max-width: 640px;
+  padding-bottom: 4.5rem;
+  max-width: 640px;
   position: relative;
   .main {
-      height: 4.5rem;
-          max-width: 640px;
-
-  position: fixed;
-  z-index: 9999;
-  border-bottom: 0.5px solid #eaeaea;
-  top: 0;
-  line-height: 4.5rem;
-  font-size: 1.6rem;
-  text-align: center;
-  width: 100%;
-  background-color: #fff;
+    height: 4.5rem;
+    max-width: 640px;
+    position: fixed;
+    z-index: 9999;
+    border-bottom: 0.5px solid #eaeaea;
+    top: 0;
+    line-height: 4.5rem;
+    font-size: 1.6rem;
+    text-align: center;
+    width: 100%;
+    background-color: #fff;
     // position: relative;
     font-size: 1.6rem;
     span {
@@ -73,9 +75,9 @@ export default {
       font-size: 1.6rem;
     }
   }
-  .searchbox{
-      height: 100%;
-      z-index:9999999 !important;
+  .searchbox {
+    height: 100%;
+    z-index: 9999999 !important;
   }
 }
 </style>

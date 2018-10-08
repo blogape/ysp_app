@@ -1,6 +1,6 @@
 <template>
         <!-- 食谱软文展示 -->
-    <div class="articletemplate">
+    <router-link :to="({name:'Article',params:{id:data.id}})" class="articletemplate">
         <div class="main">
             <div class="left">
                 <div class="title">
@@ -14,7 +14,7 @@
                 <img :src="data.image"/>
             </div>
         </div>
-    </div>
+</router-link>
 </template>
 
 <script>
@@ -31,6 +31,7 @@ export default {
 .articletemplate {
   width: 100%;
   border-radius: 3px;
+  display: inline-block;
   margin-top: 1rem;
   background-color: #fff;
   height: 12rem;
