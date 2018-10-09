@@ -1,9 +1,9 @@
 <template>
 <!-- 热门食谱 -->
     <div class="hotrecipe">
-        <div class="main">
+        <router-link :to="({name:'Product',params:{id:data.recipeId}})" class="main">
             <div class="recipename">
-                    经典牛排
+                    {{data.title}}
             </div>
               <!-- 作者 -->
             <div class="author">
@@ -12,29 +12,34 @@
                 </span>
                     <!-- nikename -->
                 <div class="name">
-                    imCc_v5
+                    {{data.nickname}}
                 </div>
                 <div class="right">
                     <ul>
                         <li>
-                    <i class="icon iconfont icon-chakan"></i>23
+                    <i class="icon iconfont icon-chakan"></i>{{data.readCount}}
                         </li>
                         <li>
-                        <i class="icon iconfont icon-wujiaoxingkong"></i>23
+                        <i class="icon iconfont icon-wujiaoxingkong"></i>{{data.collectCount}}
                         </li>
                     </ul>
                 </div>
             </div>
             <div class="img">
-                <img src="https://image.hongbeibang.com/Fsv0y3X1ggxLmMiXM-wV1cKM7Dgm?1280X853&imageView2/1/w/600/h/348"/>
+                <img :src="data.coverimg"/>
             </div>
           
-        </div>
-    </div>
+ </router-link>    </div>
 </template>
 
 <script>
-export default {};
+export default {
+  props: {
+    data: {
+      type: Object
+    }
+  }
+};
 </script>
 
 <style lang='less' scoped>
@@ -46,6 +51,7 @@ export default {};
   padding-bottom: 1rem;
   .main {
     width: 100%;
+    display: inline-block;
     .recipename {
       color: #4a4a4a;
       font-size: 1.6rem;

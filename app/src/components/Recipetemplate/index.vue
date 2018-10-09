@@ -11,11 +11,9 @@
                 {{data.title}}
             </div>
             <!-- 标签 -->
-            <div class="label">
+            <div class="label" v-show="data.listTags!==null">
                 <ul>
-                    <li>菲力</li>
-                    <li>全熟</li>
-                    <li>1.8cm</li>
+                    <li v-for='(item,key) in data.listTags' :key='key'>{{item}}</li>
                 </ul>
             </div>
             <!-- 作者 -->

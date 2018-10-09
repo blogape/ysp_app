@@ -3,26 +3,25 @@
     <div class="themrecipe">
    <Header>主题食谱</Header>
    <div class="name">
-       吃货不容错过
+       {{themdata.title}}
    </div>
    <!-- 作者 -->
    <div class="author">
-       <img src="https://image.hongbeibang.com/FlH_fO_u1OzNS9zGadlw5zO3h_iA?1080X810&imageView2/1/w/80/h/80"/>小小哨兵
+       <img :src="themdata.headimg"/>{{themdata.nickname}}
    </div>
    <!-- 描述 -->
    <div class="describle">
-        对于吃货来说，广州的名字都带着令人垂延的光环！作为吃货的天堂，广州美食中隆重的正菜，精巧的小食点心都深得人心，广博奇杂，口味独特。
+        {{themdata.description}}
    </div>
     <!-- 线条 数量 -->
    <div class="line">
-       <font>15道美味</font>
+       <font v-show='themlist.total!=0'>{{themlist.total}}道美味</font>
        <span class="left"></span>
        <span class="right"></span>
    </div>
    <!-- 内容 -->
    <div class="content">
-       <HotRecipe></HotRecipe>
-       <HotRecipe></HotRecipe>
+       <HotRecipe v-for='(item,key) in themlist.list' :key='key' :data='item'></HotRecipe>
    </div>
     </div>
 </template>
@@ -30,10 +29,30 @@
 <script>
 import Header from "../../components/Header/";
 import HotRecipe from "../../components/Hottemplate/";
+import { getThemData } from "../../services/api.js";
 export default {
+  data() {
+    return {
+      themdata: "",
+      themlist: ""
+    };
+  },
   components: {
     Header,
     HotRecipe
+  },
+  methods: {
+    // 获取主题食谱列表
+    async getThem() {
+      let getthemdata = await getThemData(this.$route.params.id);
+      // 绑定数据
+      this.themdata = getthemdata.data;
+      // 绑定主题食谱列表
+      this.themlist = getthemdata.data.pageInfo;
+    }
+  },
+  mounted() {
+    this.getThem();
   }
 };
 </script>

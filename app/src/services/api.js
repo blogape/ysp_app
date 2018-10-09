@@ -16,11 +16,35 @@ export function getElement(){
     })
 }
 
-// 食谱详情
-
+// 食谱详情 
 export function product(id){
     return request({
         url:'/api/search-service/recipe/recipeDetail?recipeId='+id,
+        method:'get'
+    })
+}
+
+// 食谱软文
+
+export function getArticleData(id){
+    return request({
+        url:'/api/search-service/recipeArticle/info?id='+id,
+        method:'get'
+    })
+}
+
+// 主题食谱 
+export function getThemData(id){
+    return request({
+        url:'/api/search-service/recipeTopic/detail?topicId='+id,
+        method:'get'
+    })
+}
+
+// 热门食谱
+export function getHotData(){
+    return request({
+        url:'/api/search-service/es/hot',
         method:'get'
     })
 }

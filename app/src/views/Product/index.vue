@@ -1,8 +1,7 @@
 <template>  
  <!-- 食谱详情 -->
     <div class="product">
-      <!-- {{recipedata.title.length> 6 ? recipedata.title.substring(0,16) + "..." : recipedata.title}} -->
-        <Header></Header>
+        <Header>{{this.title}}</Header>
         <!-- banner图 -->
         <div class="banner">
             <img :src="recipedata.coverimg"/>
@@ -17,7 +16,8 @@
                 <span class="name">{{userdata.nickname}}</span>
                 <!-- 收藏 -->
                 <div class="collection">
-                        <font>收藏</font>
+                        <font>收藏 
+</font>
                 </div>
             </div>
             <!-- 描述 -->
@@ -28,77 +28,54 @@
                 </div>
                 <!-- 难度 -->
                 <div class="difficulty">
-                    难度：{{difficultyDegree}}<font>制作时间：1小时以上</font>  
+                    难度：{{difficultyView}}<font>制作时间：约{{recipedata.timeCost}}分钟左右</font>  
                 </div>
                 <!-- 描述 -->
                 <div class="content">
-                    所有人都会追求美好的东西，对于食物更应如此。所以很多热爱生活的人，对待食物也是很用心的，比如这道小食物，不论是颜值，还是口味，简直让全家人都喜欢的不得了，其实它就是用到我们日常生活中最常见的食材，进行组合搭配，再用心去设计一下，就成就了高颜值的美味，而且制作简单，每个人都能轻松完成。
+                  {{recipedata.description}}
                 </div>
             </div>
             <!-- 材料 -->
             <div class="material">
                 <!-- 主料 -->
-                <div class="main">
+                <div class="main" v-show="ingredients.length>1">
                     <div class="title">
                     主料
                     </div>
                 <div class="content">
                     <ul>
-                        <li>高粉 <font>380g</font></li>
-                        <li>高粉 <font>380g</font></li>
-                        <li>高粉 <font>380g</font></li>
-                        <li>高粉 <font>380g</font></li>
-                        <li>高粉 <font>380g</font></li>
-                        <li>高粉 <font>380g</font></li>
+                        <li v-for='(items,key) in ingredients' :key='key'>{{items.ingredientName}} <font>{{items.numberUnit}}</font></li>
                     </ul>
                 </div>
                 </div>
                 <!-- 配料 -->
-                <div class="ingredients">
+                <div class="ingredients" v-show='material.length>1'>
                      <div class="title">
                     配料
                     </div>
                 <div class="content">
                     <ul>
-                        <li>高粉 <font>380g</font></li>
-                        <li>高粉 <font>380g</font></li>
-                        <li>高粉 <font>380g</font></li>
-                        <li>高粉 <font>380g</font></li>
-                        <li>高粉 <font>380g</font></li>
-                        <li>高粉 <font>380g</font></li>
+                        <li v-for='(items,key) in material' :key='key'>{{items.ingredientName}} <font>{{items.numberUnit}}</font></li>
                     </ul>
                 </div>
                 </div>
             </div>
             <!-- 烹饪步骤 -->
             <div class="cookiestep">
-                <div class="content">
+                <div class="content" v-for='(items,key) in recipedata.cookingSteps' :key='key'>
                     <div class="title">
-                    烹饪步骤          
+                    {{items.title}}          
                      </div>
                     <ul>
-                        <li>
+                        <li v-for='(item,key) in items.cookingStepByTitle' :key='key'>
                             <div class="name">
-                                准备步骤
+                                步骤{{item.stepno}}
                             </div>
                             <div class="img">
-                                <img src="https://image.hongbeibang.com/FiU01MIqgErXGE9UZmJiSyi34OBA?1280X853&imageView2/1/w/600/h/360|watermark/1/image/aHR0cDovL2ltYWdlLmhvbmdiZWliYW5nLmNvbS9GaXZ3UkFMS3ZpVG9XM3V2SmxmSnZvV0UtNjh2/dissolve/50/gravity/SouthEast/dx/25/dy/25/ws/0.09322033898305083"/>
+                                <img :src="item.images"/>
                             </div>
-                        </li>
-                    </ul>
-                </div>
-                <div class="content">
-                    <div class="title">
-                    烹饪步骤          
-                     </div>
-                    <ul>
-                        <li>
-                            <div class="name">
-                                准备步骤
-                            </div>
-                            <div class="img">
-                                <img src="https://image.hongbeibang.com/FiU01MIqgErXGE9UZmJiSyi34OBA?1280X853&imageView2/1/w/600/h/360|watermark/1/image/aHR0cDovL2ltYWdlLmhvbmdiZWliYW5nLmNvbS9GaXZ3UkFMS3ZpVG9XM3V2SmxmSnZvV0UtNjh2/dissolve/50/gravity/SouthEast/dx/25/dy/25/ws/0.09322033898305083"/>
-                            </div>
+                            <p>                            {{item.description}}
+</p>
                         </li>
                     </ul>
                 </div>
@@ -106,9 +83,9 @@
             <!-- 小贴士 -->
             <div class="tips">
                 <div class="title">
-小贴士
+                小贴士
                 </div>
-因为不同面粉吸水量是不同的，因此液体不要一次加完，可以先预留一些，最后根据实际情况再加。我的高粉吸水量很一般，如果觉得面团偏干可以多加10克左右的水！
+                {{recipedata.tips}}
             </div>
             <!-- 支持设备 -->
             <div class="equipment">
@@ -116,18 +93,16 @@
                         支持设备
                     </div>
                     <ul>
-                        <li>宜居云牛扒机 EG-SM1701-3C</li>
-                        <li>宜居云牛扒机 EG-SM1701-3C</li>
-                       
+                        <li v-for='(item,key) in recipedata.recipeMacModelMids' :key='key'>{{item.macName}} {{item.iotMacModelId}}</li>                       
                     </ul>
             </div>
             <!-- 日期与浏览次数 -->
             <div class="datareading">
-阅读 87006      <font>2017-12-19  11:06:27</font>
+                  阅读 {{recipedata.cookiedCount}}      <font>{{recipedata.createTime}}</font>
             </div>
         <!-- 一键烹饪按钮 -->
         <div class="cookie_btn">
-一键烹饪
+                一键烹饪
         </div>
     </div>
 </template>
@@ -138,12 +113,19 @@ import { product } from "../../services/api.js";
 export default {
   data() {
     return {
+      title: "",
       recipedata: "",
-      userdata:'',
+      userdata: "",
+      ingredients: "",
+      material: "",
+      difficulty:'',
     };
   },
   components: {
     Header
+  },
+  created() {
+    this.getRecipeData();
   },
   methods: {
     // 食谱详情数据
@@ -151,19 +133,38 @@ export default {
       let recipedata = await product(this.$route.params.id);
       // 食谱数据绑定
       this.recipedata = recipedata.data;
+      this.title =
+        this.recipedata.title.length > 6
+          ? this.recipedata.title.substring(0, 16) + "..."
+          : this.recipedata.title;
       //绑定用户数据
-      this.userdata=recipedata.data.user;
-      console.log(this.recipedata);
+      this.userdata = recipedata.data.user;
+      //获取困难程度的值（还需做判断）
+      this.difficulty=recipedata.data.difficultyDegree;
+      // 绑定主料
+      if (recipedata.data.ingredientInfo[0].ingredients) {
+        this.ingredients = recipedata.data.ingredientInfo[0].ingredients;
+      }
+      // 绑定辅料
+      if (recipedata.data.ingredientInfo[1].ingredients) {
+        this.material = recipedata.data.ingredientInfo[1].ingredients;
+      }
     }
   },
-  mounted() {
-    this.getRecipeData();
-  },
-  watch: {
-    // 控制标题长度
-    difficultyDegree() {
-      return '1';
-    }
+  mounted() {},
+  computed: {
+    // 判断食谱困难程度
+    difficultyView() {
+      switch(this.difficulty){
+        case 0:
+        return '初级';
+        case 1:
+        return '中级';
+        case 2:
+        return '高级';
+        default:'未知'
+      }
+}
   }
 };
 </script>
@@ -285,6 +286,11 @@ export default {
           img {
             width: 100%;
           }
+          p {
+            font-size: 1.4rem;
+            overflow: hidden;
+            line-height: 2rem;
+          }
         }
       }
     }
@@ -328,6 +334,7 @@ export default {
     line-height: 3rem;
     font-size: 1.2rem;
     font {
+      font-size: 1.2rem;
       float: right;
     }
   }

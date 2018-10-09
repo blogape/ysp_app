@@ -1,32 +1,29 @@
 <template>
     <!-- 食谱软文 -->
     <div class="article">
-   <Header>食谱软文</Header>
+   <Header>{{titile}}</Header>
   <!-- banner图 -->
   <div class="banner">
-    <img src="https://image.hongbeibang.com/Fgl2WRNdRvfSojtmAjOG5JOktt7x?1920X1280&imageView2/1/w/600/h/348"/>
+    <img :src="articledata.image"/>
   </div>
   <!-- 软文名称 -->
   <div class="name">
-这样的蒜，你吃过吗？
-<p>一蒜八吃，不止调味那么简单</p>
+    {{articledata.title}}
+<p>{{articledata.description}}</p>
   </div>
   <!-- 作者 -->
   <div class="author">
     <div class="header">
-      <img src="https://image.hongbeibang.com/FlaZoquSa5nybeRy2k162hFLvuvd?700X700&imageView2/1/w/80/h/80"/>
+      <img :src="articledata.authorHeadimg"/>
     </div>
     <div class="name">
-奶油泡芙
+      {{articledata.authorName}}
     </div>
   </div>
-  <div class="content">
-普通蒜瓣儿除了味道冲了点，不管是作为调味品还是单纯的食物，对人体健康都大有裨益。不过现在流行于高档西餐厅的“黑蒜料理”，不仅不会让你的嘴里产生令人尴尬的味道，还有酸甜的果香，甚至
-黑蒜保健品也开始抢占脑白金的市场了。
-<img src="https://image.hongbeibang.com/Fl-H_qywzg1dnQxoaB1W8sWuJ48Q?1080X810&imageView2/1/w/600/h/348"/>
-普通蒜瓣儿除了味道冲了点，不管是作为调味品还是单纯的食物，对人体健康都大有裨益。不过现在流行于高档西餐厅的“黑蒜料理”，不仅不会让你的嘴里产生令人尴尬的味道，还有酸甜的果香，甚至
-黑蒜保健品也开始抢占脑白金的市场了。
-<img src="https://image.hongbeibang.com/Fl-H_qywzg1dnQxoaB1W8sWuJ48Q?1080X810&imageView2/1/w/600/h/348"/>
+  <div class="content" >
+<div v-html="articledata.content">
+
+</div>
   </div>
   <!-- 阅读与日期 -->
   <div class="readdata">
@@ -37,14 +34,40 @@
 
 <script>
 import Header from "../../components/Header/";
+import { getArticleData } from "../../services/api.js";
+
 export default {
+  data(){
+    return{
+      articledata:"",
+      titile:'',
+    }
+  },
   components: {
     Header
+  },
+  methods:{
+    // 获取软文数据
+    async articleData(){
+        let article=await getArticleData(this.$route.params.id);
+        //绑定软文数据
+        this.articledata=article.data;
+        // 截取标题文字长度
+        this.titile= this.articledata.title.length > 6
+          ? this.articledata.title.substring(0, 16) + "..."
+          : this.articledata.title;
+    }
+  },
+  mounted () {
+    this.articleData();
   }
 };
 </script>
 
-<style lang='less' scoped>
+<style lang='less' >
+img{
+  width: 100%;
+}
 .article {
   .banner {
     width: 100%;
@@ -52,6 +75,9 @@ export default {
       width: 100%;
     }
   }
+  .content>img{
+     width:100%;
+   }
   .name {
     padding: 1rem;
     font-size: 1.6rem;
@@ -59,6 +85,7 @@ export default {
     border-bottom: 0.5px solid #ccc;
     p {
       font-size: 1.2rem;
+      line-height: 2rem;
       margin-top: 1rem;
       color: #898989;
     }
@@ -74,6 +101,7 @@ export default {
       border-radius: 50%;
       img {
         width: 100%;
+        height: 100%;
         border-radius: 50%;
       }
     }
@@ -81,17 +109,23 @@ export default {
       font-size: 1.2rem;
       color: #4A4945;
       border: none;
+     
     }
+    
   }
   .content{
     padding:0 1rem;
     color: #4A4A4A;
     line-height: 3rem;
     font-size: 1.4rem;
+    p{
+      font-size: 1.4rem;
+    }
     img{
-      max-width: 100%;
+    width: 100%;
     }
   }
+   
   .readdata{
     font-size: 1.4rem;
     padding:  1rem;
