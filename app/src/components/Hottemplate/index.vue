@@ -1,7 +1,7 @@
 <template>
 <!-- 热门食谱 -->
     <div class="hotrecipe">
-        <router-link :to="({name:'Product',params:{id:data.recipeId}})" class="main">
+        <router-link :to="({name:'Product',params:{id:1}})" class="main">
             <div class="recipename">
                     {{data.title}}
             </div>
@@ -36,7 +36,7 @@
 export default {
   props: {
     data: {
-      type: Object
+      // type: Object
     }
   }
 };

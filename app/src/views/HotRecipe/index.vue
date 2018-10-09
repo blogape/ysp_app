@@ -7,9 +7,10 @@
           v-model="loading"
           :finished="finished"
           @load="onLoad"
+          :offset='20'
           >
             <template class='template' >
-            <!-- <Hotrecipe ></Hotrecipe> -->
+            <!-- <Hotrecipe v-for="(item,key) in list" :key='key' :data='item'></Hotrecipe> -->
             </template>
             </van-list>
 
@@ -25,7 +26,9 @@ export default {
   data() {
     return {
       hotdata: "",
-       loading: false,
+      list: [],
+      pagenumber: 0,
+      loading: false,
       finished: false
     };
   },
@@ -35,16 +38,27 @@ export default {
   },
   methods: {
     // 拿到热门食谱数据
-    async getHotdata() {
-      let gethotdata = await getHotData();
+    // async getHotdata() {
+    //   let gethotdata = await getHotData(1);
+    //   // 绑定热门食谱数据
+    //   this.hotdata = gethotdata.data;
+    //   this.list=this.hotdata.list;
+    //   console.log(this.hotdata);
+    // },
+    async onLoad() {
       // 绑定热门食谱数据
+      this.pagenumber++;
+      let gethotdata = await getHotData(this.pagenumber);
       this.hotdata = gethotdata.data;
-      console.log(this.hotdata);
-    },
-    
+      this.list.push(this.hotdata.list);
+      let newArr = [].concat(this.list[0], this.list[1]);
+            this.list=newArr;
+        console.log(newArr);
+      console.log(this.list);
+    }
   },
   mounted() {
-    this.getHotdata();
+    this.onLoad();
   }
 };
 </script>

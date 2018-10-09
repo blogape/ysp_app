@@ -42,9 +42,9 @@ export function getThemData(id){
 }
 
 // 热门食谱
-export function getHotData(){
+export function getHotData(page){
     return request({
-        url:'/api/search-service/es/hot',
+        url:'/api/search-service/es/hot?page='+page+'&size=10',
         method:'get'
     })
 }
