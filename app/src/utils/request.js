@@ -1,15 +1,17 @@
 import axios from "axios";
-axios.defaults.baseURL = "https://recipe.eg-live.com";
+// axios.defaults.baseURL = "https://recipe.eg-live.com";
+axios.defaults.baseURL = "http://192.168.1.52:8765";
 // response interceptor
 axios.interceptors.response.use(
   response => {
-    const res = response.data;
-    if (res.code !== 0) {
-      message.error(res.msg);
-      return Promise.reject(res.msg);
-    } else {
-      return response.data;
-    }
+    // const res = response.data;
+    return response.data;
+
+    // if (res.code !== 0) {
+    //   // message.error(res.msg);
+    //   // return Promise.reject(res.);
+    // } else {
+    // }
   },
   error => {
     if (error.response && error.response.status === 401) {

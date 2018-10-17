@@ -69,6 +69,22 @@ export default new Router({
         title: "主题食谱"
       },
       component: resolve => require(["./views/ThemeRecipe/index.vue"], resolve)
+    },
+    {
+      path: "/search/:id",
+      name:'Search',
+      meta: {
+        title: "搜索"
+      },
+      component: resolve => require(["./views/Search/index.vue"], resolve)
+    },
+    {
+      path: "/steakcookie/:id",
+      name:'SteakCookie',
+      meta: {
+        title: "牛排机烹饪"
+      },
+      component: resolve => require(["./views/SteakCookie/index.vue"], resolve)
     }
     // {
     //   path: "/about",

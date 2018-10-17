@@ -4,45 +4,18 @@
 <!-- 头部导入 -->
 <Header>食谱分类</Header>
 <!-- 内容 -->
-<div class="main">
+<div class="main" v-for='(item,key) in  catrgorydata' :key='key'>
 <!-- 标题 -->
 <div class="title">
-肉类
+{{item.recipeCategory.categoryName}}
 </div>
 <div class="content">
 <ul>
-    <li><a href="">
-        <img src="https://image.hongbeibang.com/FsO_OiBFxI8vzhfSt2oeDnH2DgG7?240X240&imageView2/1/w/120/h/120">
-        <span>西冷牛扒</span>
-        </a></li>
- <li><a href="">
-        <img src="https://image.hongbeibang.com/FsO_OiBFxI8vzhfSt2oeDnH2DgG7?240X240&imageView2/1/w/120/h/120">
-        <span>西冷牛扒</span>
-        </a></li>
-         <li><a href="">
-        <img src="https://image.hongbeibang.com/FsO_OiBFxI8vzhfSt2oeDnH2DgG7?240X240&imageView2/1/w/120/h/120">
-        <span>西冷牛扒</span>
-        </a></li>
-         <li><a href="">
-        <img src="https://image.hongbeibang.com/FsO_OiBFxI8vzhfSt2oeDnH2DgG7?240X240&imageView2/1/w/120/h/120">
-        <span>西冷牛扒</span>
-        </a></li>
-    <li><a href="">
-        <img src="https://image.hongbeibang.com/FsO_OiBFxI8vzhfSt2oeDnH2DgG7?240X240&imageView2/1/w/120/h/120">
-        <span>西冷牛扒</span>
-        </a></li>
- <li><a href="">
-        <img src="https://image.hongbeibang.com/FsO_OiBFxI8vzhfSt2oeDnH2DgG7?240X240&imageView2/1/w/120/h/120">
-        <span>西冷牛扒</span>
-        </a></li>
-         <li><a href="">
-        <img src="https://image.hongbeibang.com/FsO_OiBFxI8vzhfSt2oeDnH2DgG7?240X240&imageView2/1/w/120/h/120">
-        <span>西冷牛扒</span>
-        </a></li>
-         <li><a href="">
-        <img src="https://image.hongbeibang.com/FsO_OiBFxI8vzhfSt2oeDnH2DgG7?240X240&imageView2/1/w/120/h/120">
-        <span>西冷牛扒</span>
-        </a></li>
+    <li v-for="(item,key) in item.recipeCategorys" :key='key'><router-link :to="({name:'Search',params:{id:item.categoryName}})" >
+        <img :src="item.img">
+        <span>{{item.categoryName}}</span>
+        </router-link>
+        </li>
 </ul>
 </div>
 </div>
@@ -51,7 +24,23 @@
 
 <script>
 import Header from "../../components/Header/";
+import { getCatrgoryData } from "../../services/api.js";
 export default {
+  data() {
+    return {
+      catrgorydata: ""
+    };
+  },
+  methods: {
+    // 获取分类数据
+    async getData() {
+      let data = await getCatrgoryData();
+      this.catrgorydata = data.data;
+    }
+  },
+  mounted() {
+    this.getData();
+  },
   components: {
     Header
   }
@@ -60,7 +49,6 @@ export default {
 
 <style lang='less' scoped>
 .category {
-  width: 100%;
   .title {
     height: 5rem;
     line-height: 5rem;
@@ -71,7 +59,12 @@ export default {
     text-align: center;
     text-align: center;
   }
+  .main {
+    padding: 1rem;
+  }
   .content {
+    overflow: hidden;
+    padding: 1rem 0;
     background-color: #fff;
     margin-top: -1rem;
     ul {

@@ -10,11 +10,15 @@
           :offset='20'
           >
             <template class='template' >
-            <!-- <Hotrecipe v-for="(item,key) in list" :key='key' :data='item'></Hotrecipe> -->
+            <Hotrecipe v-for="(item,key) in list" :key='key' :data='item'></Hotrecipe>
+           
             </template>
             </van-list>
 
         </div>
+         <div class="footer" v-show='isfooter'>
+            我可是有底线的
+            </div>
     </div>
 </template>
 
@@ -29,7 +33,9 @@ export default {
       list: [],
       pagenumber: 0,
       loading: false,
-      finished: false
+      finished: false,
+      totalNum: 0,
+      isfooter:false,
     };
   },
   components: {
@@ -47,18 +53,22 @@ export default {
     // },
     async onLoad() {
       // 绑定热门食谱数据
+      if (this.pagenumber >= this.pageSize - 1) {
+        this.finished = true;
+        this.loading = false;
+        this.isfooter=true
+        return;
+      }
+      this.loading = false;
       this.pagenumber++;
       let gethotdata = await getHotData(this.pagenumber);
       this.hotdata = gethotdata.data;
-      this.list.push(this.hotdata.list);
-      let newArr = [].concat(this.list[0], this.list[1]);
-            this.list=newArr;
-        console.log(newArr);
-      console.log(this.list);
+      this.pageSize = gethotdata.data.pageSize;
+      this.list = [].concat(this.list, this.hotdata.list);
     }
   },
   mounted() {
-    this.onLoad();
+    // this.onLoad();
   }
 };
 </script>
@@ -67,6 +77,15 @@ export default {
 .hotrecipe {
   background-color: #fff;
   .content {
+  }
+  .footer {
+    height: 3rem;
+    width: 100%;
+    text-align: center;
+    line-height: 3rem;
+    background-color: #f5f5f5;
+    font-size: 1.2rem;
+    color: #a9a9a9;
   }
 }
 </style>

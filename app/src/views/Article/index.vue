@@ -69,13 +69,23 @@ img{
   width: 100%;
 }
 .article {
+      background-color: #fff;
+
   .banner {
     width: 100%;
     img {
       width: 100%;
     }
   }
+  .content{
+    background-color: #fff;
+    font-family: "Helvetica Neue", Helvetica, "Hiragino Sans GB", "Microsoft YaHei", Arial, sans-serif;
+    font-size:medium;
+    letter-spacing:2px;
+    color: #999999;
+  }
   .content>img{
+
      width:100%;
    }
   .name {
@@ -84,10 +94,10 @@ img{
     color: #4a4a4a;
     border-bottom: 0.5px solid #ccc;
     p {
-      font-size: 1.2rem;
-      line-height: 2rem;
+      line-height: 3rem;
+      font-size: 1.4rem;
+      color: #999;
       margin-top: 1rem;
-      color: #898989;
     }
   }
   .author {
@@ -109,13 +119,15 @@ img{
       font-size: 1.2rem;
       color: #4A4945;
       border: none;
-     
+     p{
+       font-size: 1.4rem;
+     }
     }
     
   }
   .content{
     padding:0 1rem;
-    color: #4A4A4A;
+    color: #999;
     line-height: 3rem;
     font-size: 1.4rem;
     p{

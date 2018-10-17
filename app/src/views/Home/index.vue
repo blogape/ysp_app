@@ -2,15 +2,24 @@
   <div class="home">
     <!-- home 头部 -->
     <div class="header">
-    <div class="scan-icon">
+    <div class="scan-icon" @click='handleCode'>
       <i class="icon iconfont icon-saoyisao"></i>
     </div>
     <div class="search-input" @click='handleSearch'>
       <span><i class="icon iconfont icon-search_001"></i>搜索食谱/食材/问题</span>
     </div>
-    <div class="scan-icon">
+    <div class="scan-icon" @click='handleMore'>
       <i class="icon iconfont icon-more"></i>
     </div>
+
+      <!-- 弹出更多 -->
+        <div class="popup-more" v-if='moreview'>
+          <ul>
+            <li><a href="#">烹饪历史</a></li>
+             <li><a href="#">收藏记录</a></li>
+          </ul>
+          <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABIAAAAJCAYAAAFI2EyZAAAAAXNSR0IArs4c6QAAAIVJREFUKBWVkN0NgDAIhDFu4SauZRyjcSxHcQ57pWdA6ENJWn78OCoiamf3guDpR2uLy2oSEQX9/YmEfs8N9NAFw7CjRfHaYkkbXH11mf7dXmuYcPObhfBymgMJWSCAgDLgDzJPvV0x4mmzAniNPakg981JgEZ7J0N/1aAwodCMAHvpm+ALCRYgJABhMPUAAAAASUVORK5CYII="/>
+        </div>
     </div>
     <van-pull-refresh v-model="isLoading" @refresh="onRefresh">
     <!-- banner图 -->
@@ -89,11 +98,12 @@ export default {
   },
   data() {
     return {
+      moreview: false,
       isSearch: false,
       isLoading: false,
       myisloading: true,
       bannerdata: "",
-      elementdata: ""
+      elementdata: "",
     };
   },
   mounted() {
@@ -127,18 +137,27 @@ export default {
       document.body.scrollTop = 0;
       this.$refs.isSearch.show = true;
     },
+    // 调用 扫一扫
+    handleCode() {
+      EG_Recipes.nativeQRCoderScan(
+        JSON.stringify({ funName: "nativeScanReuslt", rootType: 5 })
+      );
+    },
     // 下拉刷新
     onRefresh() {
       setTimeout(() => {
         window.location.reload();
         this.isLoading = false;
       }, 500);
+    },
+    handleMore() {
+      this.moreview = true;
     }
   }
 };
 </script>
 
-<style lang='less' scoped>
+<style lang='less'>
 .home {
   width: 100%;
   position: relative;
@@ -232,6 +251,79 @@ export default {
   }
   .searchpopup {
     height: 100%;
+  }
+  .popup-more:before {
+    position: absolute;
+    top: -5px;
+    right: 5px;
+    width: 10.5px;
+    display: block;
+    height: 5px;
+    background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABIAAAAJCAYAAAFI2EyZAAAAAXNSR…JPvV0x4mmzAniNPakg981JgEZ7J0N/1aAwodCMAHvpm+ALCRYgJABhMPUAAAAASUVORK5CYII=)
+      no-repeat 50%;
+    background-size: 100% 100%;
+    content: "";
+  }
+  .popup-more {
+    position: absolute;
+    top: 0;
+    right: 0;
+
+    height: auto;
+    bottom: 0;
+    width: 100px;
+    z-index: 999;
+    display: block;
+    img {
+      position: absolute;
+      top: 3rem;
+      right: 1.5rem;
+    }
+    ul {
+      position: absolute;
+      top: 38px;
+      right: 10px;
+      display: block;
+      z-index: 1000;
+      border-radius: 4px;
+      width: 125px;
+      background: rgba(0, 0, 0, 0.9);
+      list-style-type: none;
+      margin: 0;
+      padding: 0;
+      list-style: none outside none;
+      background-color: rgba(0, 0, 0, 0.9);
+      li {
+        display: block;
+        text-align: center;
+        position: relative;
+        border-bottom: 1px solid hsla(0, 0%, 100%, 0.2);
+        height: 40px;
+        line-height: 40px;
+        border-radius: 4px;
+        width: 125px;
+        /* background: rgba(0,0,0,.9); */
+        list-style-type: none;
+        margin: 0;
+        padding: 0;
+        list-style: none outside none;
+        z-index: 1000;
+        list-style-type: none;
+        margin: 0;
+        padding: 0;
+        list-style: none outside none;
+
+        a {
+          display: block;
+          border: 0;
+          width: 100%;
+          font-size: 14px;
+          color: #fff;
+          z-index: 1000;
+          text-decoration: none;
+        }
+      }
+    }
   }
 }
 </style>

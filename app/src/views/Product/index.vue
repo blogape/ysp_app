@@ -15,8 +15,8 @@
                 <!-- nikename -->
                 <span class="name">{{userdata.nickname}}</span>
                 <!-- 收藏 -->
-                <div class="collection">
-                        <font>收藏 
+                <div :class="{collection:isActive,'collec':hasError}" @click='handleCollection' collection>
+                        <font>{{collecttext}} 
 </font>
                 </div>
             </div>
@@ -101,24 +101,61 @@
                   阅读 {{recipedata.cookiedCount}}      <font>{{recipedata.createTime}}</font>
             </div>
         <!-- 一键烹饪按钮 -->
-        <div class="cookie_btn">
+        <div class="cookie_btn" @click='handleCookieBtn'>
                 一键烹饪
         </div>
+        <!-- 弹出层设备 -->
+<van-popup v-model="show">
+  <div class="equipment-popup">
+      <div class="header">
+请选择烹饪设备
+      </div>
+      <div class="content">
+        <ul>
+          <li v-for='(item,key) in equipmentdata' :key='key'>
+            <router-link to='/steakcookie/1'>
+              <img :src="item.image"/>
+              <div class="container">
+                   <!-- 名称 -->
+                  <span>{{item.name}}</span>
+                   <!-- 状态 -->
+                  <span class='status'>{{item.status}}</span>
+              </div>
+          </router-link>
+          </li>
+         
+        </ul>
+      </div>
+      <!-- 取消 -->
+      <div class="footer" @click='handleCancel'>
+          取消
+      </div>
+  </div>
+</van-popup>
     </div>
 </template>
 
 <script>
 import Header from "../../components/Header/";
-import { product } from "../../services/api.js";
+import { product, recipeCollect, deleteCollect,searchEquipment} from "../../services/api.js";
+import { handleUserData } from "../../utils/appapi.js";
+import { Toast, Popup } from "vant";
 export default {
   data() {
     return {
       title: "",
       recipedata: "",
+      show: false,
+      isActive: true,
+      collecttext: "收藏",
+      hasError: false,
       userdata: "",
       ingredients: "",
       material: "",
-      difficulty:'',
+      difficulty: "",
+      recipeId: "",
+      iscollect: "",
+      equipmentdata:'',
     };
   },
   components: {
@@ -126,13 +163,24 @@ export default {
   },
   created() {
     this.getRecipeData();
+    this.recipeId = this.$route.params.id;
   },
   methods: {
     // 食谱详情数据
     async getRecipeData() {
-      let recipedata = await product(this.$route.params.id);
+      let token;
+      // 调用获取用户数据
+      let userData = JSON.parse(localStorage.getItem("userData"));
+      if (!userData) {
+        token == null;
+      } else {
+        token = userData.token;
+      }
+      let recipedata = await product(this.$route.params.id, token);
       // 食谱数据绑定
       this.recipedata = recipedata.data;
+      this.iscollect = this.recipedata.iscollect;
+      console.log(this.recipedata);
       this.title =
         this.recipedata.title.length > 6
           ? this.recipedata.title.substring(0, 16) + "..."
@@ -140,7 +188,7 @@ export default {
       //绑定用户数据
       this.userdata = recipedata.data.user;
       //获取困难程度的值（还需做判断）
-      this.difficulty=recipedata.data.difficultyDegree;
+      this.difficulty = recipedata.data.difficultyDegree;
       // 绑定主料
       if (recipedata.data.ingredientInfo[0].ingredients) {
         this.ingredients = recipedata.data.ingredientInfo[0].ingredients;
@@ -149,28 +197,80 @@ export default {
       if (recipedata.data.ingredientInfo[1].ingredients) {
         this.material = recipedata.data.ingredientInfo[1].ingredients;
       }
+      // 判断是否收藏
+      if (this.iscollect == false) {
+        this.isActive = true;
+        this.hasError = false;
+      } else if (this.iscollect == true) {
+        this.isActive = false;
+        this.hasError = true;
+        this.collecttext = "已收藏";
+      }
+    },
+
+    // 点击收藏
+    async handleCollection(e) {
+      // 调用获取用户数据
+      handleUserData();
+      let userData = JSON.parse(localStorage.getItem("userData"));
+      if (userData != null) {
+        if (this.collecttext == "收藏") {
+          let resdata = await recipeCollect(this.recipeId, userData.token);
+          if (resdata.code == 0) {
+            // Toast("你已经收藏该食谱~");
+            Toast("收藏成功~");
+            this.collecttext = "已收藏";
+            this.isActive = false;
+            this.hasError = true;
+          }
+        } else if ((this.collecttext = "已收藏")) {
+          let resdata = await deleteCollect(this.recipeId, userData.token);
+          if (resdata.code == 0) {
+            Toast("您已取消收藏~");
+            this.collecttext = "收藏";
+            this.isActive = true;
+            this.hasError = false;
+          }
+        }
+      }
+    },
+    // 点击取消隐藏弹出
+    handleCancel(){
+      this.show=false
+    },
+    //点击一键烹饪 弹出
+    async handleCookieBtn(){
+      this.show=true;
+      handleUserData();
+      let userData = JSON.parse(localStorage.getItem("userData"));
+      if (userData != null) {
+        let resdata = await searchEquipment(this.recipeId, userData.token);
+        this.equipmentdata= resdata.data;
+      }
     }
   },
   mounted() {},
   computed: {
     // 判断食谱困难程度
     difficultyView() {
-      switch(this.difficulty){
+      switch (this.difficulty) {
         case 0:
-        return '初级';
+          return "初级";
         case 1:
-        return '中级';
+          return "中级";
         case 2:
-        return '高级';
-        default:'未知'
+          return "高级";
+        default:
+          "未知";
       }
-}
+    }
   }
 };
 </script>
 
 <style lang='less' scoped>
 .product {
+  background-color: #fff;
   .banner {
     width: 100%;
     img {
@@ -214,6 +314,23 @@ export default {
         padding: 0 2rem;
         border-radius: 3rem;
         background: #3cadff 100%;
+        float: right;
+      }
+    }
+    .collec {
+      flex: 1;
+
+      font {
+        margin-right: 1rem;
+        display: inline-block;
+        font-size: 1.4rem;
+        background-color: #ccc;
+        line-height: 3rem;
+        margin-top: 1rem;
+        color: #fff;
+        padding: 0 2rem;
+        border-radius: 3rem;
+        border: 0.5px solid #ccc;
         float: right;
       }
     }
@@ -350,6 +467,67 @@ export default {
     font-size: 1.4rem;
     border-radius: 5rem 0 0 5rem;
     background: #4a4a4a;
+  }
+  .van-popup {
+    position: fixed !important;
+    border-radius: 1.2rem;
+  }
+  .equipment-popup {
+    width: 30rem;
+    height: auto;
+    padding: 1rem 0;
+    background-color: #fff;
+    .header {
+      text-align: center;
+      font-size: 1.4rem;
+      height: 4rem;
+      border-bottom: 0.5px solid #e7e2e5;
+      font-size: 16px;
+      letter-spacing: -0.39px;
+      color: #4A4A4A;
+      letter-spacing: -0.41px;
+      text-align: center;
+      line-height: 16px;
+      line-height: 4rem;
+      width: 100%;
+    }
+    .footer{
+      height: 4rem;
+      color: #4A4A4A;
+      letter-spacing: -0.41px;
+      line-height: 5rem;
+      font-size: 1.6rem;
+      text-align: center;
+    }
+    ul {
+      li {
+        padding: 1rem 0;
+        border-bottom: 0.5px solid #e7e2e5;
+        a {
+          display: flex;
+          padding: 0 1rem;
+          .container {
+            padding-left: 1rem;
+            font-size: 1.4rem;
+            span {
+              color: #4a4a4a;
+              display: block;
+              line-height: 2.5rem;
+              font-size: 1.4rem;
+            }
+            .status {
+              color: #898989;
+              letter-spacing: -0.34px;
+              font-size: 1.2rem;
+            }
+          }
+          img {
+            width: 5rem;
+            height: 5rem;
+          }
+        }
+      }
+    }
   }
 }
 </style>

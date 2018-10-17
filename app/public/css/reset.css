@@ -107,6 +107,7 @@ section {
 html {
   height: 100%;
   width: 100%;
+  font-family: "Helvetica Neue", Helvetica, "Hiragino Sans GB", "Microsoft YaHei", Arial, sans-serif !important;
 }
 body {
   line-height: 1;
@@ -190,4 +191,31 @@ li {
 }
 .van-ellipsis {
   font-size: 1.4rem;
+}
+
+.van-popup--bottom{
+  top:0 !important;
+}
+.van-popup{
+  position: absolute !important;
+}
+
+.van-toast--text div{
+  font-size: 1.3rem;
+}
+.van-dialog__header{
+  font-size: 1.6rem;
+}
+.van-button__text{
+  font-size: 1.4rem;
+}
+.van-dialog__message--has-title{
+  text-align: center;
+}
+
+.van-tab--active{
+  color: #3CADFF !important;
+}
+.van-tabs__line{
+  background-color:#3CADFF !important;
 }

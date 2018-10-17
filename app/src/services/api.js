@@ -1,50 +1,135 @@
-import request from '../utils/request.js'
+import request from "../utils/request.js";
 
 // 首页轮播图
-export function homebanner(){
-    return request({
-        url:'/api/search-service/indexBanner/list?page=1&size=10',
-        method:'get',
-    })
-} 
-
-// 首页视图
-export function getElement(){
-    return request({
-        url:'/api/search-service/indexElement/indexElements',
-        method:'get'
-    })
+export function homebanner() {
+  return request({
+    url: "/api/search-service/indexBanner/list?page=1&size=10",
+    method: "get"
+  });
 }
 
-// 食谱详情 
-export function product(id){
-    return request({
-        url:'/api/search-service/recipe/recipeDetail?recipeId='+id,
-        method:'get'
-    })
+// 首页视图
+export function getElement() {
+  return request({
+    url: "/api/search-service/indexElement/indexElements",
+    method: "get"
+  });
+}
+
+// 食谱详情
+export function product(id,token) {
+  return request({
+    url: "/api/search-service/recipe/recipeDetail?recipeId=" + id+"&token=" + token,
+    method: "get"
+  });
 }
 
 // 食谱软文
 
-export function getArticleData(id){
-    return request({
-        url:'/api/search-service/recipeArticle/info?id='+id,
-        method:'get'
-    })
+export function getArticleData(id) {
+  return request({
+    url: "/api/search-service/recipeArticle/info?id=" + id,
+    method: "get"
+  });
 }
 
-// 主题食谱 
-export function getThemData(id){
-    return request({
-        url:'/api/search-service/recipeTopic/detail?topicId='+id,
-        method:'get'
-    })
+// 主题食谱
+export function getThemData(id) {
+  return request({
+    url: "/api/search-service/recipeTopic/detail?topicId=" + id,
+    method: "get"
+  });
 }
 
 // 热门食谱
-export function getHotData(page){
-    return request({
-        url:'/api/search-service/es/hot?page='+page+'&size=10',
-        method:'get'
-    })
+export function getHotData(page) {
+  return request({
+    url: "/api/search-service/es/hot?page=" + page + "&size=10",
+    method: "get"
+  });
+}
+
+// 联想搜索
+export function contactSearch(id) {
+  return request({
+    url: "/api/search-service/es/guessWord?keyword=" + id,
+    method: "get"
+  });
+}
+
+//热门搜索
+export function getHotSearchData() {
+  return request({
+    url: "/api/search-service/searchRecord/hot?count=10",
+    method: "get"
+  });
+}
+
+// 搜索数据
+export function getSearchData(id, page) {
+  return request({
+    url:
+      "/api/search-service/es/keyword?page=0&size=10&keyword=" +
+      id +
+      "&category",
+    method: "get"
+  });
+}
+
+//牛排机食谱
+
+export function getSteakData(id) {
+  return request({
+    url:
+      "/api/search-service/es/searchByCategory?page=0&size=100&option=" +
+      id +
+      "&category=牛排机",
+    method: "get"
+  });
+}
+
+// 面包机食谱
+export function getBrandData(id) {
+  return request({
+    url:
+      "/api/search-service/es/searchByCategory?page=0&size=100&option=" +
+      id +
+      "&category=面包机",
+    method: "get"
+  });
+}
+
+// 食谱分类
+
+export function getCatrgoryData() {
+  return request({
+    url: "/api/search-service/category/listAllByTree",
+    method: "get"
+  });
+}
+
+// 收藏食谱
+export function recipeCollect(id, token) {
+  return request({
+    url:
+      "/api/cms-service/recipeCollect/add?recipeId=" + id + "&token=" + token,
+    method: "post"
+  });
+}
+
+// 删除食谱
+export function deleteCollect(id, token){
+  return request({
+    url: "/api/cms-service/recipeCollect/delete?recipeId=" + id + "&token=" + token,
+    method: "post"
+  });
+}
+
+// 查询
+ 
+export function searchEquipment(id,token){
+  return request({
+    url: "/api/iot-service/iot/getUserMacs?recipeId=" + id + "&token=" + token,
+    method: "get"
+  });
 }

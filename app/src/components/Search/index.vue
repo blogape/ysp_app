@@ -6,23 +6,18 @@
             <span class="icon iconfont icon-fanhui" @click='handleback'></span>
             <div class="input">
                 <i class="icon iconfont icon-search_001"></i>
-                <input type="text" placeholder="搜索食谱/食材/问题" autofocus="autofocus" v-focus />
+                <input type="text" v-model='inputValue' @input="handleInput" placeholder="搜索食谱/食材/问题" autofocus="autofocus"   />
             </div>
-            <span  >搜索</span>
+            <span @click='handleSearch'>搜索</span>
         </div>
         <!-- 最近搜索 -->
-        <div class="recentsearch">
+        <div class="recentsearch" v-show='myhistory!=null'>
             <div class="title">
-            最近搜索 <i class="icon iconfont icon-shanchu"></i>
+            最近搜索 <i class="icon iconfont icon-shanchu" @click='deleteHistory'></i>
             </div>
             <div class="content">
                     <ul>
-                        <li ><a href=''>牛肉</a></li>
-                        <li><a href=''>猪肉</a></li>
-                        <li><a href=''>牛排</a></li>
-                        <li><a href=''>鸡肉</a></li>
-                        <li><a href=''>羊肉</a></li>
-                        <li><a href=''>狗欧</a></li>
+                        <li v-for='(item,key) in history' :key='key'><router-link :to="({name:'Search',params:{id:item}})" >{{item}}</router-link></li>
                     </ul>
             </div>
         </div>
@@ -33,28 +28,35 @@
             </div>
             <div class="content">
                     <ul>
-                        <li><a href=''>牛肉</a></li>
-                        <li><a href=''>猪肉</a></li>
-                        <li><a href=''>牛排</a></li>
-                        <li><a href=''>鸡肉</a></li>
-                        <li><a href=''>猪肉</a></li>
-                        <li><a href=''>牛排</a></li>
-                        <li><a href=''>鸡肉</a></li>
-                        <li><a href=''>羊肉</a></li>
-                        <li><a href=''>狗欧</a></li>
+                        <li v-for='(item,key) in hotdata' :key='key'><router-link :to="({name:'Search',params:{id:item}})" >{{item}}</router-link></li>
                     </ul>
             </div>
+        </div>
+          <!-- 搜索联想查询列表 -->
+        <div class="popup-list" v-show="isconcatSearch">
+          <ul>
+            <li v-for='(item,key) in concatList' v-if='key<10' :key='key' @click='handleAssociated'><router-link :to="({name:'Search',params:{id:item}})" >{{item}}<i class="icon iconfont icon-arrow-left-top"></i></router-link></li>
+          </ul>
         </div>
     </div>
         </van-popup>
 </template>
 
 <script>
+import { contactSearch, getHotSearchData } from "../../services/api.js";
+import { Toast, Dialog } from "vant";
 export default {
   data() {
     return {
       show: false,
-      focusState: false
+      focusState: false,
+      isconcatSearch: false,
+      inputValue: "",
+      concatList: "",
+      hotdata: "",
+      myhistory: "",
+      history: "",
+      historydata: ""
     };
   },
   directives: {
@@ -72,9 +74,80 @@ export default {
     },
     handleClick() {
       // this.inserted();
+    },
+    // 热门搜索
+    async hotSearch() {
+      let hotsearchdata = await getHotSearchData();
+      this.hotdata = hotsearchdata.data;
+    },
+    // 历史记录
+    handleHistory() {
+      this.myhistory = localStorage.getItem("history");
+      if (this.myhistory != null) {
+        let history = this.myhistory.split(",");
+        this.history = Array.from(new Set(history.reverse()));
+      }
+    },
+    // 删除历史记录
+    deleteHistory() {
+      Dialog.confirm({
+        title: "提示",
+        message: "确认删除全部历史记录？"
+      })
+        .then(() => {
+          // on confirm
+          localStorage.removeItem("history");
+          this.handleHistory();
+        })
+        .catch(() => {
+          // on cancel
+        });
+    },
+    // 联想搜索
+    async handleInput(e) {
+      if (e.target.value == "") {
+        this.isconcatSearch = false;
+      } else {
+        let concatdata = await contactSearch(e.target.value);
+        if (this.concatList.length == 0) {
+          this.isconcatSearch = false;
+        }
+        this.concatList = concatdata.data;
+        if (this.concatList.length > 0) {
+          this.isconcatSearch = true;
+        }
+      }
+    },
+
+    // 点击关联搜索的时候
+    handleAssociated() {
+      // this.handleSearch();
+    },
+    // 点击搜索输入框
+    handleSearch() {
+      if (this.inputValue == "") {
+        Toast("请输入你想要的东西~");
+      } else {
+        let newlocaStorage = localStorage.getItem("history");
+        if (newlocaStorage == null || newlocaStorage == "") {
+          localStorage.setItem("history", this.inputValue);
+        } else {
+          let mylocaStorage = localStorage.getItem("history");
+          let strog;
+          strog = mylocaStorage.split(",");
+          strog.push(this.inputValue);
+          localStorage.setItem("history", strog);
+        }
+        this.$router.push({ name: "Search", params: { id: this.inputValue } });
+      }
     }
   },
-  computed: {}
+  mounted() {
+    this.hotSearch();
+    this.handleHistory();
+    // this.searchChange();
+  },
+  watch: {}
 };
 </script>
 
@@ -132,7 +205,7 @@ export default {
   }
   .recentsearch {
     width: 100%;
-    margin-top: 1rem;
+    margin-top: 5rem;
     color: #999999;
     line-height: 3rem;
     .title {
@@ -160,6 +233,34 @@ export default {
             padding: 0.5rem 1.2rem;
             background-color: #f5f6f8;
             font-size: 1.2rem;
+          }
+        }
+      }
+    }
+  }
+  .popup-list {
+    position: absolute;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    top: 4.5rem;
+    background-color: #f9f9f9;
+    ul {
+      li {
+        height: 4.5rem;
+        line-height: 4.5rem;
+        text-indent: 1rem;
+        font-size: 1.4rem;
+        border-bottom: 0.5px solid #dedede;
+        a {
+          font-size: 1.4rem;
+          display: block;
+          i {
+            display: inline-block;
+            font-size: 1.4rem;
+            float: right;
+            margin-right: 1rem;
+            color: #7e8c8d;
           }
         }
       }

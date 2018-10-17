@@ -36,7 +36,6 @@ export default {
 .header {
   padding-bottom: 4.5rem;
   max-width: 640px;
-  position: relative;
   .main {
     height: 4.5rem;
     max-width: 640px;
