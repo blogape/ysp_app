@@ -47,7 +47,7 @@ export default new Router({
       component: resolve => require(["./views/HotRecipe/index.vue"], resolve)
     },
     {
-      path: "/product/:id",
+      path: "/recipedetail/:id",
       name:'Product',
       meta: {
         title: "食谱详情"
@@ -85,6 +85,38 @@ export default new Router({
         title: "牛排机烹饪"
       },
       component: resolve => require(["./views/SteakCookie/index.vue"], resolve)
+    },
+    {
+      path: "/breadCookie/:id",
+      name:'BreadCookie',
+      meta: {
+        title: "面包机烹饪"
+      },
+      component: resolve => require(["./views/BreadCookie/index.vue"], resolve)
+    },
+    {
+      path: "/complete",
+      name:'Complete',
+      meta: {
+        title: "烹饪完成"
+      },
+      component: resolve => require(["./views/empty/complate.vue"], resolve)
+    },
+    {
+      path: "/history",
+      name:'History',
+      meta: {
+        title: "收藏记录"
+      },
+      component: resolve => require(["./views/History/index.vue"], resolve)
+    },
+    {
+      path: "/cookieHistory",
+      name:'CookieHistory',
+      meta: {
+        title: "烹饪历史"
+      },
+      component: resolve => require(["./views/CookieHistory/index.vue"], resolve)
     }
     // {
     //   path: "/about",

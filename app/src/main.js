@@ -7,7 +7,6 @@ import services from './utils/request.js';
 import 'vant/lib/vant-css/index.css';
 Vue.use(Vant);
 Vue.config.productionTip = false;
-
 new Vue({
   router,
   store,

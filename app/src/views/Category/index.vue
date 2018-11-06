@@ -2,7 +2,7 @@
 <!-- 食谱分类 -->
 <div class="category">
 <!-- 头部导入 -->
-<Header>食谱分类</Header>
+<Header :isHideSearch='true'>食谱分类</Header>
 <!-- 内容 -->
 <div class="main" v-for='(item,key) in  catrgorydata' :key='key'>
 <!-- 标题 -->

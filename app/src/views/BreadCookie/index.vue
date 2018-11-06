@@ -1,16 +1,16 @@
 <template>
     <div class="steakCokkie">
-        <Header :isshare='false'>牛排机</Header>
+        <Header :isshare='false'>面包机</Header>
         <!-- 头部 -->
         <div class="ysp-header">
-            <div class='left' @click='handleLock' >
+            <!-- <div class='left' @click='handleLock' >
                     <img src="../../assets/images/icon_lock_dis.png" id='lockimg'/>
                     <span :class="{lockcolor:iscolor}">童锁</span>
             </div>
              <div class='right'>
                     <img src="../../assets/images/icon_scan_dis.png"/>
                      <span>扫一扫</span>
-            </div>
+            </div> -->
         </div>
         <!-- 环形倒计时 -->
         <div class="content">
@@ -29,7 +29,7 @@
     <!-- 时间 -->
     <span class='test-time'>剩余时间</span>
     <!-- 名称 -->
-    <span class="name">{{title}}</span>
+    <span class="name">全麦面包哈哈哈</span>
     <!-- 状态 -->
     <span class="tatus">{{statusText}}</span>
       <!-- 动画圈圈 -->
@@ -43,9 +43,10 @@
         <!-- 按钮组 -->
         <div class="cookie-btn">
         <van-button round type="danger" :class="{ active: isActive,round:isround}" @click='handleSteakStopCookie' :disabled='topdisblead'>停止</van-button>
-        <van-button round type="danger" :class="{ active: isActive,round:isround}" @click='handleAginStartCookie' v-if='isaginbtn'>开始煎烤</van-button>
+        <van-button round type="danger" :class="{ active: isActive,round:isround}" @click='handleAginStartCookie' v-if='isaginbtn'>继续</van-button>
+        <van-button round type="danger" :class="{ active: isActive,round:isround}" @click='suspended' :disabled='topdisblead'  v-if='stopsupper'>暂停</van-button>
         </div>
-                    <Recipetemplate v-for='(item,key) in  steakdata.list' :key='key' :data='item'></Recipetemplate>
+        <Recipetemplate v-for='(item,key) in  steakdata.list' :key='key' :data='item'></Recipetemplate>
 
     </div>
 </template>
@@ -56,24 +57,28 @@ import locaactive from "../../assets/images/icon_lock_select.png";
 import loca from "../../assets/images/icon_lock_dis.png";
 import { handleUserData } from "../../utils/appapi.js";
 import { Toast, Popup } from "vant";
-import {getApiUrl} from '../../utils/request.js';
 import Recipetemplate from "../../components/Recipetemplate/";
+import {getApiUrl} from '../../utils/request.js';
+
 
 import {
   steackAgainCookie,
   steakStopCookie,
   startCookie,
+  cookieSearch,
   methodclock,
-  cookieSearch
+  breadStopCookie,
+  brandsupperstop
 } from "../../services/api.js";
 export default {
-
   data() {
     return {
+      steakdata:'',
+      title:'',
       currentRate: 0,
       timer: "--:--",
-      steakdata:'',
       rate: 0,
+      stopsupper: true,
       iscolor: false,
       isclassstop: false,
       topdisblead: false,
@@ -81,7 +86,6 @@ export default {
       isActive: false,
       isround: true,
       statusText: "",
-      title:'',
       isaginbtn: false,
       macId: "",
       iotMacModelId: "",
@@ -92,12 +96,12 @@ export default {
   components: {
     Header,
     Recipetemplate
-  
   },
   methods: {
     // 连接websock
     linkWebsock() {
-      let SocketUrl=getApiUrl();
+            let SocketUrl=getApiUrl();
+
       let stompClient = null;
       let macId = this.macId;
       // 52为测试环境
@@ -139,24 +143,26 @@ export default {
               this.topdisblead = true;
             }
             //  计算剩余总时间
+
             var total =
-              timecomputed.downRemianTimeSecond +
-                timecomputed.downTimeMinuteL * 60 <
-              timecomputed.upRemainTimeSecond + timecomputed.upTimeMinuteL * 60
-                ? timecomputed.upRemainTimeSecond +
-                  timecomputed.upTimeMinuteL * 60
-                : timecomputed.downTimeSecond +
-                  timecomputed.downTimeMinuteL * 60;
+              obj.iotPlatformMessages.data.remainHour * 60 * 60 +
+              obj.iotPlatformMessages.data.remianMinute * 60;
             // 1为预热状态
-            if (obj.iotPlatformMessages.runstate === 1) {
-              this.isanimate = true;
-            } else if (obj.iotPlatformMessages.runstate === 2) {
+            if (obj.iotPlatformMessages.runstate === 2) {
               this.isanimate = false;
               this.isaginbtn = true;
+              this.stopsupper = false;
+            } else if (obj.iotPlatformMessages.runstate === 1) {
+              // 工作中的状态
+              this.isanimate = true;
+              this.isaginbtn = false;
+              this.stopsupper = true;
+
               // 判断是否等于工作中
-              if (obj.iotPlatformMessages.runstateText == "工作中") {
-                this.isaginbtn = false;
-              }
+              // if (obj.iotPlatformMessages.runstateText == "工作中") {
+              //   this.isaginbtn = false;
+              // }
+              // 走到这里来了
               // 时间转成分秒
               this.time(total);
               // 算出总时间
@@ -176,30 +182,41 @@ export default {
         }
       );
     },
-
+ // 拿到牛排机食谱数据
+    async steakData() {
+                  let argumast='面包机';
+      let steakdata = await cookieSearch(argumast);
+      // this.steakdata = steakdata.data;
+      if (steakdata.data.list.length > 0) {
+          let breadfilter = steakdata.data.list;
+          this.steakdata = steakdata.data;
+          this.steakdata.list = [];
+          for (let i = 0; i < breadfilter.length; i++) {
+            if (breadfilter[i].id != this.recipeid) {
+              this.steakdata.list.push(breadfilter[i]);
+            }
+          }
+          }
+      // console.log(steakdata);
+    },
     //   计算时间
     time(second) {
-      //将秒数除以60，然后下舍入，既得到分钟数
-      let m; //分
-      let s; //秒
-      m = Math.floor(second / 60);
-      // 取得秒%60的余数，既得到秒数
-      s = second % 60;
-      //将变量转换为字符串
-      m += "";
-      s += "";
-      //如果只有一位数，前面增加一个0
-      m = m.length == 1 ? "0" + m : m;
-      s = s.length == 1 ? "0" + s : s;
-      if (m == "NaN") {
-        this.timer = "--:--";
+      
+      let time=second * 1000;
+      if (time <= 0) {
+        return "--:--";
       } else {
-        this.timer = m + ":" + s;
+        let result = [];
+        result.push(Math.floor(time / 3.6e6));
+        result.push(Math.floor((time % 3.6e6) / 60000));
+        // result.push(Math.floor((time % 60000) / 1000));
+        this.timer=result.map(x => (x < 10 ? "0" + x : x)).join(":");
       }
+     
     },
     // 开始煎烤
     async handleAginStartCookie() {
-      let jk='再次启动';
+      let jk = "启动";
       let cookiedata = await steackAgainCookie(
         this.iotMacModelId,
         this.macId,
@@ -213,10 +230,10 @@ export default {
     async handleSteakStopCookie() {
       Dialog.confirm({
         title: "提示",
-        message: "你要停止此食谱吗？"
+        message: "是否真的要停止，停止后就无法在制作，食材也可能作废了喔！"
       })
         .then(async () => {
-          let cookiedata = await steakStopCookie(
+          let cookiedata = await breadStopCookie(
             this.iotMacModelId,
             this.macId,
             this.recipeid,
@@ -228,10 +245,21 @@ export default {
         })
         .catch(() => {});
     },
+    // 暂停
+   async suspended() {
+        let cookiedata = await brandsupperstop(
+          this.iotMacModelId,
+          this.macId,
+          this.recipeid,
+          this.token
+        );
+        if (cookiedata.code == 0) {
+          this.stopsupper = false;
+        }
+    },
     // 开启烹饪
     async handleStartCookie() {
-      // alert(this.recipeid);
-        let text='开启烹饪';
+      let text = "启动";
       let cookiedata = await startCookie(
         this.iotMacModelId,
         this.macId,
@@ -277,24 +305,6 @@ export default {
           this.topdisblead = true;
         }
       }
-    },
-     // 拿到牛排机食谱数据
-    async steakData() {
-            let argumast='牛排机';
-
-      let steakdata = await cookieSearch(argumast);
-      // this.steakdata = steakdata.data;
-      if (steakdata.data.list.length > 0) {
-          let breadfilter = steakdata.data.list;
-          this.steakdata = steakdata.data;
-          this.steakdata.list = [];
-          for (let i = 0; i < breadfilter.length; i++) {
-            if (breadfilter[i].id != this.recipeid) {
-              this.steakdata.list.push(breadfilter[i]);
-            }
-          }
-          }
-      // console.log(steakdata);
     }
   },
   mounted() {
@@ -302,12 +312,12 @@ export default {
     this.linkWebsock();
     //进入页面就开始烹饪
     this.handleStartCookie();
-    // 获取牛排机食谱列表数据
     this.steakData();
   },
   computed: {},
   created() {
-    this.title=this.$route.query.title<5?this.$route.query.title:this.$route.query.title.substring(0, 8) + "...";
+        this.title=this.$route.query.title<5?this.$route.query.title:this.$route.query.title.substring(0, 8) + "...";
+
     this.macId = this.$route.query.macId;
     this.iotMacModelId = this.$route.query.iotMacModelId;
     this.recipeid = this.$route.query.recipeid;
@@ -337,17 +347,15 @@ export default {
       text-align: center;
       height: 8rem;
       float: left;
-      
       line-height: 5rem;
       .lockcolor {
         color: #3cadff;
       }
       img {
-                width:auto !important;
-
         line-height: 5rem;
         margin-top: 1.5rem;
         vertical-align: middle;
+        width:auto !important;
         height: 5rem;
       }
     }
@@ -358,8 +366,9 @@ export default {
       height: 8rem;
       line-height: 5rem;
       img {
+                width:auto !important;
+
         line-height: 5rem;
-        width:auto !important;
         margin-top: 1.5rem;
         vertical-align: middle;
         height: 5rem;

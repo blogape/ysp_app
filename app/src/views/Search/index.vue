@@ -5,7 +5,7 @@
     <div class="scan-icon" @click='$router.back()'>
       <i class="icon iconfont icon-fanhui"></i>
     </div>
-    <div class="search-input" >
+    <div class="search-input" @click='handleSearch'>
       <span><i class="icon iconfont icon-search_001"></i>{{recipeid}}</span>
     </div>
     <div class="scan-icon">
@@ -16,37 +16,70 @@
     <div class="content">
         <Recipetemplate v-for='(item,key) in recipedata.list' :key='key' :data='item'></Recipetemplate>
     </div>
+    <!-- 空 -->
+  <NotFind v-if='isnot'>没有搜索到您想要的结果 </NotFind>
+    <!-- 弹出搜索页面-->
+      <Search  ref='isSearch'></Search>
     </div>
 </template>
 
 <script>
-import Recipetemplate  from '../../components/Recipetemplate/';
-import {getSearchData} from '../../services/api.js';
+import Recipetemplate from "../../components/Recipetemplate/";
+import Search from "../../components/Search/";
+import NotFind from "../../components/NotFind/";
+import { getSearchData } from "../../services/api.js";
 export default {
   data() {
     return {
-      recipeid:'',
-      recipedata:'',
+      recipeid: "",
+      recipedata: "",
+      isnot: false
     };
   },
   components: {
-    Recipetemplate
+    Recipetemplate,
+    NotFind,
+    Search
   },
   methods: {
     async handleSearchdata() {
-      let steakdata=await getSearchData(this.recipeid);
-      this.recipedata=steakdata.data;
-      console.log(steakdata);
+      // 名称截取
+      this.recipeid =
+        this.$route.params.id.length > 10
+          ? this.$route.params.id.slice(0, 18) + "..."
+          : this.$route.params.id;
+      // 隐藏无
+      this.isnot = false;
+      // 获取数据
+      let steakdata = await getSearchData(this.recipeid);
+      this.recipedata = steakdata.data;
+      if (this.recipedata.list.length < 1) {
+        this.isnot = true;
+      }
+    },
+    // 弹出搜索页面
+    handleSearch() {
+      document.body.scrollTop = 0;
+      this.$refs.isSearch.show = true;
     }
   },
-  mounted () {
+  mounted() {
     this.handleSearchdata();
   },
   created() {
     //绑定食谱id
-    this.recipeid=this.$route.params.id;
-
+    this.recipeid =
+      this.$route.params.id.length > 10
+        ? this.$route.params.id.slice(0, 18) + "..."
+        : this.$route.params.id;
   },
+  // 监听路由是否发生变化
+  watch: {
+    $route(from) {
+      this.handleSearchdata();
+      // let id = this.$route.params.id;
+    }
+  }
 };
 </script>
 
@@ -101,7 +134,7 @@ export default {
       }
     }
   }
-  .content{
+  .content {
     padding-top: 4.5rem;
     padding-left: 1rem;
     padding-right: 1rem;

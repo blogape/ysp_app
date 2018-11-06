@@ -1,7 +1,7 @@
 <template>  
  <!-- 食谱详情 -->
     <div class="product">
-        <Header>{{this.title}}</Header>
+        <Header :isshare='true' :isHideSearch='isSearch' :title='recipedata.title' :imageUrl='recipedata.coverimg' :descriContent='recipedata.description' :shareUrl="'https://recipe.eg-live.com/m-web/#/recipedetail/'+recipeId">{{this.title}}</Header>
         <!-- banner图 -->
         <div class="banner">
             <img :src="recipedata.coverimg"/>
@@ -16,8 +16,7 @@
                 <span class="name">{{userdata.nickname}}</span>
                 <!-- 收藏 -->
                 <div :class="{collection:isActive,'collec':hasError}" @click='handleCollection' collection>
-                        <font>{{collecttext}} 
-</font>
+                        <font>{{collecttext}} </font>
                 </div>
             </div>
             <!-- 描述 -->
@@ -93,12 +92,12 @@
                         支持设备
                     </div>
                     <ul>
-                        <li v-for='(item,key) in recipedata.recipeMacModelMids' :key='key'>{{item.macName}} {{item.iotMacModelId}}</li>                       
+                        <li v-for='(item,key) in recipedata.recipeMacModelMids' :key='key'>{{item.macName}} {{item.macModel}}</li>                       
                     </ul>
             </div>
             <!-- 日期与浏览次数 -->
             <div class="datareading">
-                  阅读 {{recipedata.cookiedCount}}      <font>{{recipedata.createTime}}</font>
+                  阅读 {{recipedata.readCount}}      <font>{{recipedata.createTime}}</font>
             </div>
         <!-- 一键烹饪按钮 -->
         <div class="cookie_btn" @click='handleCookieBtn'>
@@ -108,22 +107,21 @@
 <van-popup v-model="show">
   <div class="equipment-popup">
       <div class="header">
-请选择烹饪设备
+        请选择烹饪设备
       </div>
       <div class="content">
         <ul>
           <li v-for='(item,key) in equipmentdata' :key='key'>
-            <router-link to='/steakcookie/1'>
+            <a  @click='handleCookieClick(item.did,item.uuid,item.status,item.recipeId,item.type,recipedata.title)'>
               <img :src="item.image"/>
               <div class="container">
                    <!-- 名称 -->
-                  <span>{{item.name}}</span>
+                  <span>{{item.name}} </span>
                    <!-- 状态 -->
                   <span class='status'>{{item.status}}</span>
               </div>
-          </router-link>
+          </a>
           </li>
-         
         </ul>
       </div>
       <!-- 取消 -->
@@ -132,30 +130,41 @@
       </div>
   </div>
 </van-popup>
+
+
     </div>
 </template>
 
 <script>
 import Header from "../../components/Header/";
-import { product, recipeCollect, deleteCollect,searchEquipment} from "../../services/api.js";
+import {
+  product,
+  recipeCollect,
+  deleteCollect,
+  searchEquipment
+} from "../../services/api.js";
 import { handleUserData } from "../../utils/appapi.js";
 import { Toast, Popup } from "vant";
+import { startCookie } from "../../services/api.js";
 export default {
   data() {
     return {
       title: "",
       recipedata: "",
+      isSearch: false,
       show: false,
       isActive: true,
       collecttext: "收藏",
       hasError: false,
       userdata: "",
       ingredients: "",
+      token: "",
+      text: "开启烹饪",
       material: "",
       difficulty: "",
       recipeId: "",
       iscollect: "",
-      equipmentdata:'',
+      equipmentdata: ""
     };
   },
   components: {
@@ -163,15 +172,24 @@ export default {
   },
   created() {
     this.getRecipeData();
-    this.recipeId = this.$route.params.id;
   },
   methods: {
+    async startCookie() {
+      let cookiedata = await startCookie(
+        this.iotMacModelId,
+        this.macId,
+        this.recipeid,
+        this.token,
+        this.text
+      );
+      return cookiedata.code;
+    },
     // 食谱详情数据
     async getRecipeData() {
       let token;
       // 调用获取用户数据
       let userData = JSON.parse(localStorage.getItem("userData"));
-      if (!userData) {
+      if (userData == null) {
         token == null;
       } else {
         token = userData.token;
@@ -179,8 +197,8 @@ export default {
       let recipedata = await product(this.$route.params.id, token);
       // 食谱数据绑定
       this.recipedata = recipedata.data;
+      this.recipeId = recipedata.data.id;
       this.iscollect = this.recipedata.iscollect;
-      console.log(this.recipedata);
       this.title =
         this.recipedata.title.length > 6
           ? this.recipedata.title.substring(0, 16) + "..."
@@ -235,21 +253,150 @@ export default {
       }
     },
     // 点击取消隐藏弹出
-    handleCancel(){
-      this.show=false
+    handleCancel() {
+      this.show = false;
     },
     //点击一键烹饪 弹出
-    async handleCookieBtn(){
-      this.show=true;
+    async handleCookieBtn() {
+      this.show = true;
       handleUserData();
       let userData = JSON.parse(localStorage.getItem("userData"));
       if (userData != null) {
         let resdata = await searchEquipment(this.recipeId, userData.token);
-        this.equipmentdata= resdata.data;
+        this.equipmentdata = resdata.data;
+      }
+    },
+    // 烹饪跳转并且获取状态跟是否跳转
+    async handleCookieClick(
+      macId,
+      iotMacModelId,
+      status,
+      recipeid,
+      type,
+      title
+    ) {
+      this.handleCookieBtn();
+      if (status == "离线") {
+        Toast("离线设备无法使用~");
+      } else if (this.recipeId == recipeid) {
+        if (status == "待机") {
+          if (type == "智能牛排机") {
+            if (this.startCookie() == 0&&this.startCookie()==9500) {
+              this.$router.push({
+                name: "SteakCookie",
+                query: {
+                  macId: this.macId,
+                  iotMacModelId: this.iotMacModelId,
+                  recipeid: this.recipeId,
+                  title: title
+                }
+              });
+            } else {
+              Toast("控制异常，请确认网络和设备工作是否正常！");
+            }
+          } else {
+            if (this.startCookie() == 0&&this.startCookie()==9500) {
+              this.$router.push({
+                name: "BreadCookie",
+                query: {
+                  macId: macId,
+                  iotMacModelId: iotMacModelId,
+                  recipeid: this.recipeId,
+                  title: title
+                }
+              });
+            } else {
+              Toast("控制异常，请确认网络和设备工作是否正常！");
+            }
+          }
+          return false;
+        }
+        if (
+          status == "预热" ||
+          status == "预热完成" ||
+          status == "工作中" ||
+          status == "暂停中"
+        ) {
+          if (type == "智能牛排机") {
+            if (this.startCookie() == 0&&this.startCookie()==9500) {
+              this.$router.push({
+                name: "SteakCookie",
+                query: {
+                  macId: macId,
+                  iotMacModelId: iotMacModelId,
+                  recipeid: this.recipeId,
+                  title: title
+                }
+              });
+            } else {
+              Toast("控制异常，请确认网络和设备工作是否正常！");
+            }
+          } else {
+            if (this.startCookie() == 0&&this.startCookie()==9500) {
+              this.$router.push({
+                name: "BreadCookie",
+                query: {
+                  macId: macId,
+                  iotMacModelId: iotMacModelId,
+                  recipeid: this.recipeId,
+                  title: title
+                }
+              });
+            } else {
+              Toast("控制异常，请确认网络和设备工作是否正常！");
+            }
+          }
+        }
+      } else if (recipeid == null && status != "待机") {
+        Toast("设备正在运行中~");
+      } else if (this.recipeId != recipeid) {
+        if (status == "待机") {
+          if (type == "智能牛排机") {
+            if (this.startCookie() == 0&&this.startCookie()==9500) {
+              this.$router.push({
+                name: "SteakCookie",
+                query: {
+                  macId: macId,
+                  iotMacModelId: iotMacModelId,
+                  recipeid: this.recipeId,
+                  title: title
+                }
+              });
+            } else {
+              Toast("控制异常，请确认网络和设备工作是否正常！");
+            }
+          } else {
+            if (this.startCookie() == 0&&this.startCookie()==9500) {
+              this.$router.push({
+                name: "BreadCookie",
+                query: {
+                  macId: macId,
+                  iotMacModelId: iotMacModelId,
+                  recipeid: this.recipeId,
+                  title: title
+                }
+              });
+            } else {
+              Toast("控制异常，请确认网络和设备工作是否正常！");
+            }
+          }
+          return false;
+        } else {
+            Toast("控制异常，请确认网络和设备工作是否正常！");
+        }
       }
     }
   },
-  mounted() {},
+  mounted() {
+    let userToken;
+    let userData = JSON.parse(localStorage.getItem("userData"));
+    if (userData == null) {
+      userToken = null;
+    } else {
+      userToken = userData.token;
+    }
+    this.token = userToken;
+  },
   computed: {
     // 判断食谱困难程度
     difficultyView() {
@@ -436,9 +583,8 @@ export default {
     }
     ul {
       border-bottom: 0.5px solid #ccc;
-
       li {
-        font-size: 1.2rem;
+        font-size: 1.4rem;
         height: 3rem;
         line-height: 3rem;
       }
@@ -449,9 +595,9 @@ export default {
     color: #898989;
     padding: 0 1rem;
     line-height: 3rem;
-    font-size: 1.2rem;
+    font-size: 1.4rem !important;
     font {
-      font-size: 1.2rem;
+      font-size: 1.4rem !important;
       float: right;
     }
   }
@@ -484,16 +630,16 @@ export default {
       border-bottom: 0.5px solid #e7e2e5;
       font-size: 16px;
       letter-spacing: -0.39px;
-      color: #4A4A4A;
+      color: #4a4a4a;
       letter-spacing: -0.41px;
       text-align: center;
       line-height: 16px;
       line-height: 4rem;
       width: 100%;
     }
-    .footer{
+    .footer {
       height: 4rem;
-      color: #4A4A4A;
+      color: #4a4a4a;
       letter-spacing: -0.41px;
       line-height: 5rem;
       font-size: 1.6rem;

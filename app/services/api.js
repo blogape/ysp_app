@@ -40,7 +40,7 @@ export function getArticleData(id) {
 // 主题食谱
 export function getThemData(id) {
   return request({
-    url: "/api/search-service/recipeTopic/detail/v2?topicId=" + id,
+    url: "/api/search-service/recipeTopic/detail?topicId=" + id,
     method: "get"
   });
 }
@@ -251,44 +251,7 @@ export function breadStopCookie(iotMacModelId, macId, recipeId, token) {
 
 export function cookieSearch(argumast) {
   return request({
-    url:
-      "/api/search-service/es/keyword?size=5&keyword=" +
-      argumast +
-      "&category=1",
+    url: "/api/search-service/es/keyword?size=5&keyword="+argumast+"&category=1",
     method: "get"
-  });
-}
-
-// 收藏食谱列表数据
-export function getCollectionHistory(token) {
-  return request({
-    url: "/api/search-service/recipeCollect/list?size=99&&token="+token,
-    method: "get"
-  });
-}
-
-// 删除收藏食谱列表数据
-export function deleteCollection(id,token) {
-  return request({
-    url: "/api/cms-service/recipeCollect/delete?recipeId="+id+"&&token="+token,
-    method: "post"
-  });
-}
-
-
-// 烹饪食谱列表数据
-
-export function getCookieHistory(token){
-  return request({
-    url: "/api/cooking-service/cookingRecord/cookingRecord?size=99&&token="+token,
-    method: "get"
-  });
-}
-
-// 删除食谱列表数据
-export function deletCookieData(id,token){
-  return request({
-    url: "/api/cooking-service/cookingRecord/delete?id="+id+"&&token="+token,
-    method: "post"
   });
 }

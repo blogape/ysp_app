@@ -4,7 +4,16 @@ import Vuex from "vuex";
 Vue.use(Vuex);
 
 export default new Vuex.Store({
-  state: {},
-  mutations: {},
+  state: {
+    LOADING:true
+  },
+  mutations: {
+    showLoading(state){
+      state.LOADING = true    
+  },
+  hideLoading (state) {
+      state.LOADING = false
+  }
+  },
   actions: {}
 });

@@ -27,7 +27,7 @@
   </div>
   <!-- 阅读与日期 -->
   <div class="readdata">
-阅读 87006 <span>2017-12-19  11:06:27</span>
+阅读 {{articledata.readCount}} <span>{{articledata.createTime}}</span>
   </div>
     </div>
 </template>

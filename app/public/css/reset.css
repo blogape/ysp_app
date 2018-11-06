@@ -197,7 +197,10 @@ li {
   top:0 !important;
 }
 .van-popup{
-  position: absolute !important;
+  /* position: absolute !important; */
+}
+.van-toast{
+  z-index:9999999;
 }
 
 .van-toast--text div{
@@ -218,4 +221,9 @@ li {
 }
 .van-tabs__line{
   background-color:#3CADFF !important;
+}
+.van-circle__text{
+  top:48% !important;
+
+  font-size: 3.8rem !important;
 }

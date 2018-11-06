@@ -1,7 +1,7 @@
 <template>
 <!-- 牛排机食谱 -->
     <div class="steakRecipe">
-    <Header>面包机食谱</Header>
+    <Header :isHideSearch='true'>面包机食谱</Header>
     <van-tabs v-model="active"  @click="handleTab">
     <van-tab title="综合最多">
         <Recipetemplate v-for='(item,key) in  steakdata.list' :key='key' :data='item'></Recipetemplate>

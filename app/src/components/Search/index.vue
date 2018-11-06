@@ -17,7 +17,7 @@
             </div>
             <div class="content">
                     <ul>
-                        <li v-for='(item,key) in history' :key='key'><router-link :to="({name:'Search',params:{id:item}})" >{{item}}</router-link></li>
+                        <li v-for='(item,key) in history' :key='key'><span  @click='hideSearch(item)'>{{item}}</span></li>
                     </ul>
             </div>
         </div>
@@ -28,14 +28,14 @@
             </div>
             <div class="content">
                     <ul>
-                        <li v-for='(item,key) in hotdata' :key='key'><router-link :to="({name:'Search',params:{id:item}})" >{{item}}</router-link></li>
+                        <li v-for='(item,key) in hotdata' :key='key'><span @click='hideSearch(item)'>{{item}}</span></li>
                     </ul>
             </div>
         </div>
           <!-- 搜索联想查询列表 -->
         <div class="popup-list" v-show="isconcatSearch">
           <ul>
-            <li v-for='(item,key) in concatList' v-if='key<10' :key='key' @click='handleAssociated'><router-link :to="({name:'Search',params:{id:item}})" >{{item}}<i class="icon iconfont icon-arrow-left-top"></i></router-link></li>
+            <li v-for='(item,key) in concatList' v-if='key<10' :key='key' @click='handleAssociated'><span @click='hideSearch(item)' >{{item}}<i class="icon iconfont icon-arrow-left-top"></i></span></li>
           </ul>
         </div>
     </div>
@@ -88,6 +88,13 @@ export default {
         this.history = Array.from(new Set(history.reverse()));
       }
     },
+    hideSearch(id) {
+       this.$router.push({
+        name: "Search",
+        params: { id: id }
+      });
+      this.show = false;
+    },
     // 删除历史记录
     deleteHistory() {
       Dialog.confirm({
@@ -139,6 +146,8 @@ export default {
           localStorage.setItem("history", strog);
         }
         this.$router.push({ name: "Search", params: { id: this.inputValue } });
+        this.show = false;
+
       }
     }
   },
@@ -153,7 +162,7 @@ export default {
 
 <style lang='less' scoped>
 .search {
-  position: fixed;
+  position: absolute;
   top: 0;
   height: 100%;
   left: 0;
@@ -201,11 +210,11 @@ export default {
     }
   }
   .hotsearch {
-    margin-top: 5rem !important;
+    margin-top: 2rem !important;
   }
   .recentsearch {
     width: 100%;
-    margin-top: 5rem;
+    margin-top: 1rem;
     color: #999999;
     line-height: 3rem;
     .title {
@@ -228,7 +237,7 @@ export default {
           overflow: hidden;
           margin-top: 1rem;
           margin-left: 1.2rem;
-          a {
+          span {
             border-radius: 5px;
             padding: 0.5rem 1.2rem;
             background-color: #f5f6f8;
@@ -252,7 +261,7 @@ export default {
         text-indent: 1rem;
         font-size: 1.4rem;
         border-bottom: 0.5px solid #dedede;
-        a {
+        span {
           font-size: 1.4rem;
           display: block;
           i {

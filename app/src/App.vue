@@ -1,9 +1,23 @@
 <template>
   <div id="app">
    <router-view/>
+   <Loading v-if='LOADING'></Loading>
   </div>
 </template>
  <script>
+import Loading from "./components/Loading/";
+import { mapState } from "vuex";
+export default {
+  components: {
+    Loading
+  },
+  data() {
+    return {};
+  },
+  computed: {
+    ...mapState(["LOADING"])
+  }
+};
 </script>
 <style lang="less">
 #app {

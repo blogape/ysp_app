@@ -11,12 +11,11 @@
     <div class="scan-icon" @click='handleMore'>
       <i class="icon iconfont icon-more"></i>
     </div>
-
       <!-- 弹出更多 -->
-        <div class="popup-more" v-if='moreview'>
+        <div class="popup-more menu-class" v-if='moreview'>
           <ul>
-            <li><a href="#">烹饪历史</a></li>
-             <li><a href="#">收藏记录</a></li>
+            <li> <router-link to='/cookieHistory'>烹饪记录</router-link></li>
+            <li> <router-link to='/history'>收藏记录</router-link></li>
           </ul>
           <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABIAAAAJCAYAAAFI2EyZAAAAAXNSR0IArs4c6QAAAIVJREFUKBWVkN0NgDAIhDFu4SauZRyjcSxHcQ57pWdA6ENJWn78OCoiamf3guDpR2uLy2oSEQX9/YmEfs8N9NAFw7CjRfHaYkkbXH11mf7dXmuYcPObhfBymgMJWSCAgDLgDzJPvV0x4mmzAniNPakg981JgEZ7J0N/1aAwodCMAHvpm+ALCRYgJABhMPUAAAAASUVORK5CYII="/>
         </div>
@@ -25,7 +24,9 @@
     <!-- banner图 -->
     <div class="banner">
   <van-swipe :autoplay="3000" :touchable="true">
-    <van-swipe-item v-for='(item,key) in bannerdata' :key='key'><img :src="item.image"/></van-swipe-item>
+        <van-swipe-item v-for='(item,key) in bannerdata' :key='key' v-if='item.type==0'><router-link :to="{ name: 'Product', params: { id: item.relatedId }}" > <img :src="item.image"/></router-link></van-swipe-item>
+        <van-swipe-item v-for='(item,key) in bannerdata' :key='key' v-if='item.type==1'><router-link :to="{ name: 'Article', params: { id: item.relatedId }}" > <img :src="item.image"/></router-link></van-swipe-item>
+        <van-swipe-item v-for='(item,key) in bannerdata' :key='key' v-if='item.type==2'><router-link :to="{ name: 'Themrecipe', params: { id: item.relatedId }}" > <img :src="item.image"/></router-link></van-swipe-item>
   </van-swipe>
     </div>
     <!-- 导航 -->
@@ -88,6 +89,8 @@ import Loading from "../../components/Loading/";
 import Recipetemplate from "../../components/Recipetemplate/";
 import Search from "../../components/Search/";
 import { homebanner, getElement } from "../../services/api.js";
+import { handleUserData } from "../../utils/appapi.js";
+
 export default {
   components: {
     Article,
@@ -103,13 +106,18 @@ export default {
       isLoading: false,
       myisloading: true,
       bannerdata: "",
-      elementdata: "",
+      elementdata: ""
     };
   },
   mounted() {
     this.onloading();
     this.getBannerData();
     this.getElement();
+
+    let _this = this;
+    document.body.addEventListener("click", e => {
+      this.moreview = false;
+    });
   },
   methods: {
     onloading() {
@@ -125,7 +133,6 @@ export default {
     // 获取食谱视图内容
     async getElement() {
       let elementData = await getElement();
-      console.log(elementData);
       this.elementdata = elementData.data;
     },
     // 点击隐藏
@@ -150,14 +157,47 @@ export default {
         this.isLoading = false;
       }, 500);
     },
-    handleMore() {
-      this.moreview = true;
+    handleMore(e) {
+      handleUserData();
+      this.moreview ? (this.moreview = false) : (this.moreview = true);
+      e.stopPropagation();
     }
   }
 };
 </script>
 
-<style lang='less'>
+<style lang='less' scoped>
+.nav ul li a img{
+  height: 5rem;
+}
+.nav {
+    margin-top: 0.5rem;
+    background-color: #fff;
+    padding: 1rem 0;
+    ul {
+      display: flex;
+      width: 100%;
+      li {
+        flex: 1;
+        text-align: center;
+        a {
+          display: inline-block;
+          img {
+            height: 5rem;
+          }
+          span {
+            height: 2rem;
+            line-height: 1.6rem;
+            display: block;
+            color: #4a4a4a;
+            letter-spacing: 0;
+            font-size: 1.2rem;
+          }
+        }
+      }
+    }
+  }
+
 .home {
   width: 100%;
   position: relative;
@@ -175,6 +215,7 @@ export default {
     display: flex;
     .scan-icon {
       width: 4.5rem;
+      z-index: 999999;
       text-align: center;
       height: 4.5rem;
       i {
@@ -233,6 +274,7 @@ export default {
           display: inline-block;
           img {
             height: 5rem;
+            width: auto !important;
           }
           span {
             height: 2rem;
@@ -275,6 +317,7 @@ export default {
     z-index: 999;
     display: block;
     img {
+      width: 1.5rem;
       position: absolute;
       top: 3rem;
       right: 1.5rem;

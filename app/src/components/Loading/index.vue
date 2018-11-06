@@ -27,6 +27,7 @@ export default {};
     img {
       margin-top: 15rem;
       height: 30rem;
+      width: auto;
     }
   }
 }

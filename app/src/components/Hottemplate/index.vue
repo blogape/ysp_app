@@ -1,14 +1,14 @@
 <template>
 <!-- 热门食谱 -->
     <div class="hotrecipe">
-        <router-link :to="({name:'Product',params:{id:1}})" class="main">
+        <router-link :to="({name:'Product',params:{id:data.id}})" class="main">
             <div class="recipename">
                     {{data.title}}
             </div>
               <!-- 作者 -->
             <div class="author">
                 <span>
-                <img src="https://image.hongbeibang.com/FjkoQD4vxHs-n7ZejZHi8fZWVvBU?400X225&imageView2/1/w/80/h/80"/>
+                <img :src="data.headimg"/>
                 </span>
                     <!-- nikename -->
                 <div class="name">

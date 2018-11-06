@@ -1,10 +1,34 @@
 import axios from "axios";
+import store from "../store.js";
+
+var host = window.location.host;
 // axios.defaults.baseURL = "https://recipe.eg-live.com";
-axios.defaults.baseURL = "http://192.168.1.52:8765";
+let urlBase;
+let ishost = host.indexOf("192.168.1");
+if (ishost == 0) {
+  urlBase = "http://192.168.1.52:8765";
+} else {
+  urlBase = "https://recipe.eg-live.com";
+}
+
+// console.log(store.state.LOADING);
+
+store.commit('hideLoading');
+// socket配置
+export function getApiUrl() {
+  let ishost = host.indexOf("192.168.1");
+  if (ishost == 0) {
+    return 'http://192.168.1.52:9501/webSocketServer'
+  }else{
+    return 'https://recipe.eg-live.com/ws/webSocketServer'
+  }
+}
+axios.defaults.baseURL = urlBase;
 // response interceptor
 axios.interceptors.response.use(
   response => {
     // const res = response.data;
+    // store.commit('showLoading');
     return response.data;
 
     // if (res.code !== 0) {

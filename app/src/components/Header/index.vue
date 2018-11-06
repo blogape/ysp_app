@@ -3,22 +3,33 @@
     <div class="main" >
     <span class="icon iconfont icon-fanhui" @click='handleBack'></span>
     <slot ></slot>
-    <i class="icon iconfont icon-sousuo" @click='handleShow'></i>
+    <i class="icon iconfont icon-sousuo" @click='handleShow' v-if='isHideSearch'></i>
+        <i class="icon iconfont icon-fenxiang" @click='handleSshare' v-if='isshare'></i>
  </div>
    <!-- 弹出搜索页面-->
    <Search  ref='isSearch' class="searchbox"></Search>
 </div>
-
 </template>
-
 <script>
 import Search from "../../components/Search/";
 export default {
+  props: [
+    "isHideSearch",
+    "title",
+    "imageUrl",
+    "descriContent",
+    "shareUrl",
+    "isshare"
+  ],
+  data() {
+    return {
+    
+    };
+  },
   components: {
     Search
   },
-  mounted () {
-  },
+  mounted() {},
   methods: {
     handleBack() {
       this.$router.go(-1);
@@ -26,9 +37,20 @@ export default {
     handleShow() {
       this.$refs.isSearch.show = true;
     },
-    
-  },
+    // 分享食谱
+    handleSshare() {
+      var shardata = JSON.stringify({
+        title: this.title,
+        descriContent: this.descriContent,
 
+        shareUrl: this.shareUrl,
+        imageUrl: this.imageUrl
+      });
+      if (typeof EG_Recipes != "undefined") {
+        EG_Recipes.toShareByNative(shardata);
+      }
+    }
+  }
 };
 </script>
 
@@ -36,6 +58,7 @@ export default {
 .header {
   padding-bottom: 4.5rem;
   max-width: 640px;
+  // position: fixed;
   .main {
     height: 4.5rem;
     max-width: 640px;

@@ -1,7 +1,7 @@
 <template>
         <!-- 热门食谱 -->
     <div class="hotrecipe">
-        <Header>热门食谱</Header>
+        <Header :isHideSearch='true'>热门食谱</Header>
         <div class="content">
           <van-list
           v-model="loading"
@@ -11,10 +11,8 @@
           >
             <template class='template' >
             <Hotrecipe v-for="(item,key) in list" :key='key' :data='item'></Hotrecipe>
-           
             </template>
             </van-list>
-
         </div>
          <div class="footer" v-show='isfooter'>
             我可是有底线的
@@ -35,7 +33,7 @@ export default {
       loading: false,
       finished: false,
       totalNum: 0,
-      isfooter:false,
+      isfooter: false
     };
   },
   components: {
@@ -56,7 +54,7 @@ export default {
       if (this.pagenumber >= this.pageSize - 1) {
         this.finished = true;
         this.loading = false;
-        this.isfooter=true
+        this.isfooter = true;
         return;
       }
       this.loading = false;
