@@ -35,7 +35,7 @@
         <li>
             <router-link to='/category'>
           <img src="../../assets/images/icon_classify.png"/>
-          <span>食谱分类{{spliteImg('12')}}</span>
+          <span>食谱分类</span>
           </router-link>       
         </li>
         <li>
@@ -235,9 +235,9 @@ export default {
     }
   },
   computed:{
-    spliteImg(url){
-        return url
-    }
+    // spliteImg(url){
+    //     return url
+    // }
   }
 };
 </script>
