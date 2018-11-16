@@ -1,9 +1,18 @@
 import axios from "axios";
 import store from "../store.js";
 import getConfigUrl from "../../public/config/config.json";
+import '../../public/js/getappdata.js';
 var host = window.location.host;
 // axios.defaults.baseURL = "https://recipe.eg-live.com";
-console.log(getConfigUrl);
+setTimeout(()=>{
+  console.log(Datas());
+},3000)
+
+// console.log(uPi);
+
+
+// console.log(JSON.stringify(uPi) );
+// console.log(uPi.config)
 let isApiUrl = getConfigUrl.config.active;
 let ApiUrl = getConfigUrl.config;
 // ApiUrl
