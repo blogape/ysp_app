@@ -7,7 +7,7 @@
         <Recipetemplate :data='item'></Recipetemplate>
         <!-- 删除 -->
         <div class="delete">
-            <span @click='handleDelete(item.id)'>删除</span>
+            <span @click='handleDelete(item.primaryId)'>删除</span>
         </div>
     </div>
     </div>
@@ -21,6 +21,7 @@ import Recipetemplate from "../../components/Recipetemplate/";
 import { getCookieHistory, deletCookieData } from "../../services/api.js";
 import { Dialog, Toast } from "vant";
 import NotFind from "../../components/NotFind/";
+import { handleUserData } from "../../utils/appapi.js";
 
 export default {
   data() {
@@ -30,14 +31,22 @@ export default {
       isnot: false
     };
   },
+  created(){
+    
+    handleUserData();
+    setTimeout(()=>{
+  this.userToken = JSON.parse(localStorage.getItem("userData"));
+    this.getcolledata();
+    },100)
+  
+  },
   components: {
     Header,
     Recipetemplate,
     NotFind
   },
   mounted() {
-    this.userToken = JSON.parse(localStorage.getItem("userData"));
-    this.getcolledata();
+  
   },
   methods: {
     //   获取烹饪记录
@@ -59,6 +68,11 @@ export default {
           if (deletecolldata.code == 0) {
             Toast("您删除成功了哟 o(╥﹏╥)o~");
             this.getcolledata();
+          }else if(deletecolldata.code == 9501){
+            Toast("该食谱正在烹饪中，不能删除喔！(¯﹃¯)");
+
+          }else if(deletecolldata.code == 1){
+            Toast("您删除失败了哟 o(╥﹏╥)o~");
           }
         })
         .catch(() => {

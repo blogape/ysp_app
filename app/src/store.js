@@ -9,7 +9,7 @@ export default new Vuex.Store({
   },
   mutations: {
     showLoading(state){
-      state.LOADING = true    
+    state.LOADING = true
   },
   hideLoading (state) {
       state.LOADING = false

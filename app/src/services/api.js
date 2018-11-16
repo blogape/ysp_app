@@ -70,12 +70,13 @@ export function getHotSearchData() {
 }
 
 // 搜索数据
-export function getSearchData(id, page) {
+export function getSearchData(id, pid) {
   return request({
     url:
       "/api/search-service/es/keyword?page=0&size=10&keyword=" +
       id +
-      "&category",
+      "&category=" +
+      pid,
     method: "get"
   });
 }
@@ -150,7 +151,8 @@ export function steackAgainCookie(iotMacModelId, macId, recipeId, token, jk) {
     recipeId: recipeId,
     instructionName: jk,
     instructionType: 2,
-    type: 2
+    type: 2,
+    id: jk
   };
   return request({
     url: "/api/cooking-service/cookingRecord/macControl?token=" + token,
@@ -168,7 +170,8 @@ export function steakStopCookie(iotMacModelId, macId, recipeId, token) {
     recipeId: recipeId,
     instructionName: "取消烹饪",
     instructionType: 0,
-    type: 1
+    type: 1,
+    id: 2
   };
   return request({
     url: "/api/cooking-service/cookingRecord/macControl?token=" + token,
@@ -185,7 +188,8 @@ export function brandsupperstop(iotMacModelId, macId, recipeId, token) {
     recipeId: recipeId,
     instructionName: "暂停",
     instructionType: 2,
-    type: 1
+    type: 1,
+    id:10
   };
   return request({
     url: "/api/cooking-service/cookingRecord/macControl?token=" + token,
@@ -200,12 +204,11 @@ export function startCookie(iotMacModelId, macId, recipeId, token, text) {
     iotMacModelId: iotMacModelId,
     macId: macId,
     recipeId: recipeId,
-    instructionName: text,
     instructionType: 1,
-    type: 1
+    type: 1,
   };
   return request({
-    url: "/api/cooking-service/cookingRecord/macControl?token=" + token,
+    url: "/api/cooking-service/cookingRecord/macStart?token=" + token,
     data: data,
     method: "post"
   });
@@ -220,7 +223,8 @@ export function methodclock(iotMacModelId, macId, recipeId, token, status) {
     instructionName: status,
     instructionType: 2,
     recipeId: recipeId,
-    type: 2
+    type: 2,
+    id:status
   };
   return request({
     url: "/api/cooking-service/cookingRecord/macControl?token=" + token,
@@ -238,7 +242,8 @@ export function breadStopCookie(iotMacModelId, macId, recipeId, token) {
     recipeId: recipeId,
     instructionName: "停止",
     instructionType: 0,
-    type: 1
+    type: 1,
+    id: 9
   };
   return request({
     url: "/api/cooking-service/cookingRecord/macControl?token=" + token,
@@ -262,33 +267,46 @@ export function cookieSearch(argumast) {
 // 收藏食谱列表数据
 export function getCollectionHistory(token) {
   return request({
-    url: "/api/search-service/recipeCollect/list?size=99&&token="+token,
+    url: "/api/search-service/recipeCollect/list?size=99&&token=" + token,
     method: "get"
   });
 }
 
 // 删除收藏食谱列表数据
-export function deleteCollection(id,token) {
+export function deleteCollection(id, token) {
   return request({
-    url: "/api/cms-service/recipeCollect/delete?recipeId="+id+"&&token="+token,
+    url:
+      "/api/cms-service/recipeCollect/delete?recipeId=" +
+      id +
+      "&&token=" +
+      token,
     method: "post"
   });
 }
 
-
 // 烹饪食谱列表数据
 
-export function getCookieHistory(token){
+export function getCookieHistory(token) {
   return request({
-    url: "/api/cooking-service/cookingRecord/cookingRecord?size=99&&token="+token,
+    url: "/api/cooking-service/cookingRecord/list/v2?size=99&&token=" + token,
     method: "get"
   });
 }
 
 // 删除食谱列表数据
-export function deletCookieData(id,token){
+export function deletCookieData(id, token) {
   return request({
-    url: "/api/cooking-service/cookingRecord/delete?id="+id+"&&token="+token,
+    url:
+      "/api/cooking-service/cookingRecord/delete?id=" + id + "&&token=" + token,
     method: "post"
+  });
+}
+
+// 获取当前是否正在烹饪列表
+export function getUserCookieing(token) {
+  return request({
+    url:
+      "/api/cooking-service/cookingRecord/getUserCookingTasks?token=" + token,
+    method: "get"
   });
 }

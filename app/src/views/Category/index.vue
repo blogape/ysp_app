@@ -11,7 +11,7 @@
 </div>
 <div class="content">
 <ul>
-    <li v-for="(item,key) in item.recipeCategorys" :key='key'><router-link :to="({name:'Search',params:{id:item.categoryName}})" >
+    <li v-for="(item,key) in item.recipeCategorys" :key='key'><router-link :to="({name:'Search',params:{id:item.categoryName,pid:1}})" >
         <img :src="item.img">
         <span>{{item.categoryName}}</span>
         </router-link>

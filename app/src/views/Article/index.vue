@@ -1,7 +1,7 @@
 <template>
     <!-- 食谱软文 -->
     <div class="article">
-   <Header>{{titile}}</Header>
+   <Header v-if='isheader' :isshare='true'  :title='articledata.title' :imageUrl='articledata.image' :descriContent='articledata.description' :shareUrl="sharUrl+articleId+'?sharid=1'">{{titile}}</Header>
   <!-- banner图 -->
   <div class="banner">
     <img :src="articledata.image"/>
@@ -27,49 +27,65 @@
   </div>
   <!-- 阅读与日期 -->
   <div class="readdata">
-阅读 {{articledata.readCount}} <span>{{articledata.createTime}}</span>
-  </div>
+      阅读 {{articledata.readCount}} <span>{{articledata.createTime}}</span>
+    </div>
     </div>
 </template>
 
 <script>
 import Header from "../../components/Header/";
 import { getArticleData } from "../../services/api.js";
+import { getarticleUrl } from "../../utils/request.js";
 
 export default {
-  data(){
-    return{
-      articledata:"",
-      titile:'',
-    }
+  data() {
+    return {
+      articledata: "",
+      titile: "",
+      isheader: true,
+      sharUrl: "",
+      articleId: ""
+    };
   },
   components: {
     Header
   },
-  methods:{
+  methods: {
     // 获取软文数据
-    async articleData(){
-        let article=await getArticleData(this.$route.params.id);
-        //绑定软文数据
-        this.articledata=article.data;
-        // 截取标题文字长度
-        this.titile= this.articledata.title.length > 6
+    async articleData() {
+      let article = await getArticleData(this.$route.params.id);
+      //绑定软文数据
+      this.articledata = article.data;
+      // 截取标题文字长度
+      this.titile =
+        this.articledata.title.length > 6
           ? this.articledata.title.substring(0, 16) + "..."
           : this.articledata.title;
+    },
+    handleShareHide() {
+      var host = window.location.href;
+      console.log(host);
+      let ishost = host.indexOf("sharid");
+      if (ishost != -1) {
+        this.isheader = false;
+      }
     }
   },
-  mounted () {
+  mounted() {
+    this.handleShareHide();
+    this.sharUrl = getarticleUrl();
+    this.articleId = this.$route.params.id;
     this.articleData();
   }
 };
 </script>
 
 <style lang='less' >
-img{
+img {
   width: 100%;
 }
 .article {
-      background-color: #fff;
+  background-color: #fff;
 
   .banner {
     width: 100%;
@@ -77,17 +93,17 @@ img{
       width: 100%;
     }
   }
-  .content{
+  .content {
     background-color: #fff;
-    font-family: "Helvetica Neue", Helvetica, "Hiragino Sans GB", "Microsoft YaHei", Arial, sans-serif;
-    font-size:medium;
-    letter-spacing:2px;
+    font-family: "Helvetica Neue", Helvetica, "Hiragino Sans GB",
+      "Microsoft YaHei", Arial, sans-serif;
+    font-size: medium;
+    letter-spacing: 2px;
     color: #999999;
   }
-  .content>img{
-
-     width:100%;
-   }
+  .content > img {
+    width: 100%;
+  }
   .name {
     padding: 1rem;
     font-size: 1.6rem;
@@ -115,37 +131,35 @@ img{
         border-radius: 50%;
       }
     }
-    .name{
+    .name {
       font-size: 1.2rem;
-      color: #4A4945;
+      color: #4a4945;
       border: none;
-     p{
-       font-size: 1.4rem;
-     }
+      p {
+        font-size: 1.4rem;
+      }
     }
-    
   }
-  .content{
-    padding:0 1rem;
+  .content {
+    padding: 0 1rem;
     color: #999;
     line-height: 3rem;
     font-size: 1.4rem;
-    p{
+    p {
       font-size: 1.4rem;
     }
-    img{
-    width: 100%;
+    img {
+      width: 100%;
     }
   }
-   
-  .readdata{
-    font-size: 1.4rem;
-    padding:  1rem;
-    color: #898989;
-    span{
-      float: right;
-          font-size: 1.4rem;
 
+  .readdata {
+    font-size: 1.4rem;
+    padding: 1rem;
+    color: #898989;
+    span {
+      float: right;
+      font-size: 1.4rem;
     }
   }
 }

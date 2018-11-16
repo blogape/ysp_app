@@ -33,7 +33,8 @@ export default {
     return {
       recipeid: "",
       recipedata: "",
-      isnot: false
+      isnot: false,
+      pid:''
     };
   },
   components: {
@@ -51,7 +52,7 @@ export default {
       // 隐藏无
       this.isnot = false;
       // 获取数据
-      let steakdata = await getSearchData(this.recipeid);
+      let steakdata = await getSearchData(this.recipeid,this.pid);
       this.recipedata = steakdata.data;
       if (this.recipedata.list.length < 1) {
         this.isnot = true;
@@ -64,6 +65,7 @@ export default {
     }
   },
   mounted() {
+    this.pid=this.$route.params.pid
     this.handleSearchdata();
   },
   created() {

@@ -18,6 +18,8 @@ export default {
     }
   },
   created() {
+        this.$store.commit('hideLoading');
+
     // alert(this.tmyrecipeid);
   }
 };

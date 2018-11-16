@@ -1,7 +1,7 @@
 <template>  
  <!-- 食谱详情 -->
     <div class="product">
-        <Header :isshare='true' :isHideSearch='isSearch' :title='recipedata.title' :imageUrl='recipedata.coverimg' :descriContent='recipedata.description' :shareUrl="'https://recipe.eg-live.com/m-web/#/recipedetail/'+recipeId">{{this.title}}</Header>
+        <Header v-if='isheader' :isshare='true' :isHideSearch='isSearch' :title='recipedata.title' :imageUrl='recipedata.coverimg' :descriContent='recipedata.description' :shareUrl="sharUrl+recipeId+'?sharid=1'">{{this.title}}</Header>
         <!-- banner图 -->
         <div class="banner">
             <img :src="recipedata.coverimg"/>
@@ -15,7 +15,7 @@
                 <!-- nikename -->
                 <span class="name">{{userdata.nickname}}</span>
                 <!-- 收藏 -->
-                <div :class="{collection:isActive,'collec':hasError}" @click='handleCollection' collection>
+                <div :class="{collection:isActive,'collec':hasError}" @click='handleCollection' collection v-if='iscoolebtn'>
                         <font>{{collecttext}} </font>
                 </div>
             </div>
@@ -27,7 +27,7 @@
                 </div>
                 <!-- 难度 -->
                 <div class="difficulty">
-                    难度：{{difficultyView}}<font>制作时间：约{{recipedata.timeCost}}分钟左右</font>  
+                    难度：{{difficultyView}}<font>制作时间：约{{diifftimeCost}}</font>  
                 </div>
                 <!-- 描述 -->
                 <div class="content">
@@ -100,7 +100,7 @@
                   阅读 {{recipedata.readCount}}      <font>{{recipedata.createTime}}</font>
             </div>
         <!-- 一键烹饪按钮 -->
-        <div class="cookie_btn" @click='handleCookieBtn'>
+        <div class="cookie_btn" @click='handleCookieBtn' v-if='iscookiebtn'>
                 一键烹饪
         </div>
         <!-- 弹出层设备 -->
@@ -146,25 +146,33 @@ import {
 import { handleUserData } from "../../utils/appapi.js";
 import { Toast, Popup } from "vant";
 import { startCookie } from "../../services/api.js";
+import { getShareUrl } from "../../utils/request.js";
+
 export default {
   data() {
     return {
       title: "",
       recipedata: "",
+      isheader: true,
       isSearch: false,
+      iscookiebtn: true,
       show: false,
       isActive: true,
       collecttext: "收藏",
       hasError: false,
+      sharUrl: "",
+      iscoolebtn: true,
       userdata: "",
       ingredients: "",
       token: "",
-      text: "开启烹饪",
+      text: "1",
       material: "",
       difficulty: "",
+      timeCost: "",
       recipeId: "",
       iscollect: "",
-      equipmentdata: ""
+      equipmentdata: "",
+      code: ""
     };
   },
   components: {
@@ -174,15 +182,25 @@ export default {
     this.getRecipeData();
   },
   methods: {
-    async startCookie() {
-      let cookiedata = await startCookie(
-        this.iotMacModelId,
-        this.macId,
-        this.recipeid,
+    // 查询是否是分享出去的食谱
+    handleShareHide() {
+      var host = window.location.href;
+      let ishost = host.indexOf("sharid");
+      if (ishost != -1) {
+        this.iscoolebtn = false;
+        this.iscookiebtn = false;
+        this.isheader = false;
+      }
+    },
+    // 开始烹饪
+    async startCookie(macId, iotMacModelId, recipeId) {
+      return (this.code = await startCookie(
+        iotMacModelId,
+        macId,
+        recipeId,
         this.token,
         this.text
-      );
-      return cookiedata.code;
+      ));
     },
     // 食谱详情数据
     async getRecipeData() {
@@ -197,6 +215,7 @@ export default {
       let recipedata = await product(this.$route.params.id, token);
       // 食谱数据绑定
       this.recipedata = recipedata.data;
+      this.timeCost = this.recipedata.timeCost;
       this.recipeId = recipedata.data.id;
       this.iscollect = this.recipedata.iscollect;
       this.title =
@@ -230,27 +249,38 @@ export default {
     async handleCollection(e) {
       // 调用获取用户数据
       handleUserData();
-      let userData = JSON.parse(localStorage.getItem("userData"));
-      if (userData != null) {
-        if (this.collecttext == "收藏") {
-          let resdata = await recipeCollect(this.recipeId, userData.token);
-          if (resdata.code == 0) {
-            // Toast("你已经收藏该食谱~");
-            Toast("收藏成功~");
-            this.collecttext = "已收藏";
-            this.isActive = false;
-            this.hasError = true;
-          }
-        } else if ((this.collecttext = "已收藏")) {
-          let resdata = await deleteCollect(this.recipeId, userData.token);
-          if (resdata.code == 0) {
-            Toast("您已取消收藏~");
-            this.collecttext = "收藏";
-            this.isActive = true;
-            this.hasError = false;
+
+      setTimeout(async () => {
+        let userData = JSON.parse(localStorage.getItem("userData"));
+        if (userData != null) {
+          if (this.collecttext == "收藏") {
+            let resdata = await recipeCollect(this.recipeId, userData.token);
+            if (resdata.code == 0) {
+              // Toast("你已经收藏该食谱~");
+              Toast("收藏成功~");
+              this.collecttext = "已收藏";
+              this.isActive = false;
+              this.hasError = true;
+            } else if (resdata.code == 1) {
+              let resdata = await deleteCollect(this.recipeId, userData.token);
+              if (resdata.code == 0) {
+                Toast("您已取消收藏~");
+                this.collecttext = "收藏";
+                this.isActive = true;
+                this.hasError = false;
+              }
+            }
+          } else if ((this.collecttext = "已收藏")) {
+            let resdata = await deleteCollect(this.recipeId, userData.token);
+            if (resdata.code == 0) {
+              Toast("您已取消收藏~");
+              this.collecttext = "收藏";
+              this.isActive = true;
+              this.hasError = false;
+            }
           }
         }
-      }
+      }, 200);
     },
     // 点击取消隐藏弹出
     handleCancel() {
@@ -258,13 +288,21 @@ export default {
     },
     //点击一键烹饪 弹出
     async handleCookieBtn() {
-      this.show = true;
       handleUserData();
-      let userData = JSON.parse(localStorage.getItem("userData"));
-      if (userData != null) {
-        let resdata = await searchEquipment(this.recipeId, userData.token);
-        this.equipmentdata = resdata.data;
-      }
+      setTimeout(async () => {
+        let userData = JSON.parse(localStorage.getItem("userData"));
+        if (userData != null) {
+          this.token = userData.token;
+          let resdata = await searchEquipment(this.recipeId, userData.token);
+          this.equipmentdata = resdata.data;
+          if (this.equipmentdata.length > 0) {
+            this.show = true;
+          } else {
+            Toast("您没有可支持此食谱的设备！");
+            this.show = false;
+          }
+        }
+      }, 300);
     },
     // 烹饪跳转并且获取状态跟是否跳转
     async handleCookieClick(
@@ -281,33 +319,40 @@ export default {
       } else if (this.recipeId == recipeid) {
         if (status == "待机") {
           if (type == "智能牛排机") {
-            if (this.startCookie() == 0&&this.startCookie()==9500) {
-              this.$router.push({
-                name: "SteakCookie",
-                query: {
-                  macId: this.macId,
-                  iotMacModelId: this.iotMacModelId,
-                  recipeid: this.recipeId,
-                  title: title
-                }
-              });
-            } else {
-              Toast("控制异常，请确认网络和设备工作是否正常！");
-            }
+            this.startCookie(macId, iotMacModelId, this.recipeId);
+            setTimeout(() => {
+              if (this.code.code == 0 || this.code.code == 9500) {
+                this.$router.push({
+                  name: "SteakCookie",
+                  query: {
+                    macId: this.macId,
+                    iotMacModelId: this.iotMacModelId,
+                    recipeid: this.recipeId,
+                    title: title
+                  }
+                });
+              } else {
+                Toast("控制异常，请确认网络和设备工作是否正常！");
+              }
+            }, 100);
           } else {
-            if (this.startCookie() == 0&&this.startCookie()==9500) {
-              this.$router.push({
-                name: "BreadCookie",
-                query: {
-                  macId: macId,
-                  iotMacModelId: iotMacModelId,
-                  recipeid: this.recipeId,
-                  title: title
-                }
-              });
-            } else {
-              Toast("控制异常，请确认网络和设备工作是否正常！");
-            }
+            this.startCookie(macId, iotMacModelId, this.recipeId);
+            setTimeout(() => {
+              if (this.code.code == 0 || this.code.code == 9500) {
+                this.$router.push({
+                  name: "BreadCookie",
+                  query: {
+                    macId: macId,
+                    iotMacModelId: iotMacModelId,
+                    recipeid: this.recipeId,
+                    title: title
+                  }
+                });
+              } else {
+                Toast("控制异常，请确认网络和设备工作是否正常！");
+              }
+            }),
+              100;
           }
           return false;
         }
@@ -318,33 +363,25 @@ export default {
           status == "暂停中"
         ) {
           if (type == "智能牛排机") {
-            if (this.startCookie() == 0&&this.startCookie()==9500) {
-              this.$router.push({
-                name: "SteakCookie",
-                query: {
-                  macId: macId,
-                  iotMacModelId: iotMacModelId,
-                  recipeid: this.recipeId,
-                  title: title
-                }
-              });
-            } else {
-              Toast("控制异常，请确认网络和设备工作是否正常！");
-            }
+            this.$router.push({
+              name: "SteakCookie",
+              query: {
+                macId: macId,
+                iotMacModelId: iotMacModelId,
+                recipeid: this.recipeId,
+                title: title
+              }
+            });
           } else {
-            if (this.startCookie() == 0&&this.startCookie()==9500) {
-              this.$router.push({
-                name: "BreadCookie",
-                query: {
-                  macId: macId,
-                  iotMacModelId: iotMacModelId,
-                  recipeid: this.recipeId,
-                  title: title
-                }
-              });
-            } else {
-              Toast("控制异常，请确认网络和设备工作是否正常！");
-            }
+            this.$router.push({
+              name: "BreadCookie",
+              query: {
+                macId: macId,
+                iotMacModelId: iotMacModelId,
+                recipeid: this.recipeId,
+                title: title
+              }
+            });
           }
         }
       } else if (recipeid == null && status != "待机") {
@@ -352,42 +389,47 @@ export default {
       } else if (this.recipeId != recipeid) {
         if (status == "待机") {
           if (type == "智能牛排机") {
-            if (this.startCookie() == 0&&this.startCookie()==9500) {
-              this.$router.push({
-                name: "SteakCookie",
-                query: {
-                  macId: macId,
-                  iotMacModelId: iotMacModelId,
-                  recipeid: this.recipeId,
-                  title: title
-                }
-              });
-            } else {
-              Toast("控制异常，请确认网络和设备工作是否正常！");
-            }
+            this.startCookie(macId, iotMacModelId, this.recipeId);
+            setTimeout(() => {
+              if (this.code.code == 0 || this.code.code == 9500) {
+                this.$router.push({
+                  name: "SteakCookie",
+                  query: {
+                    macId: macId,
+                    iotMacModelId: iotMacModelId,
+                    recipeid: this.recipeId,
+                    title: title
+                  }
+                });
+              } else {
+                Toast("控制异常，请确认网络和设备工作是否正常！");
+              }
+            }, 500);
           } else {
-            if (this.startCookie() == 0&&this.startCookie()==9500) {
-              this.$router.push({
-                name: "BreadCookie",
-                query: {
-                  macId: macId,
-                  iotMacModelId: iotMacModelId,
-                  recipeid: this.recipeId,
-                  title: title
-                }
-              });
-            } else {
-              Toast("控制异常，请确认网络和设备工作是否正常！");
-            }
+            this.startCookie(macId, iotMacModelId, this.recipeId);
+            setTimeout(() => {
+              if (this.code.code == 0 || this.code.code == 9500) {
+                this.$router.push({
+                  name: "BreadCookie",
+                  query: {
+                    macId: macId,
+                    iotMacModelId: iotMacModelId,
+                    recipeid: this.recipeId,
+                    title: title
+                  }
+                });
+              }
+            }, 500);
           }
-          return false;
         } else {
-            Toast("控制异常，请确认网络和设备工作是否正常！");
+          Toast("当前设备正在工作中或者正在烹饪别的食谱！");
         }
       }
     }
   },
   mounted() {
+    this.sharUrl = getShareUrl();
+    this.handleShareHide();
     let userToken;
     let userData = JSON.parse(localStorage.getItem("userData"));
     if (userData == null) {
@@ -398,6 +440,13 @@ export default {
     this.token = userToken;
   },
   computed: {
+    // 判断是否大于60分钟
+    diifftimeCost() {
+      if (this.timeCost < 60) return this.timeCost + "分钟";
+      if (this.timeCost >= 60) {
+        return Math.floor(this.timeCost / 60) + "小时";
+      }
+    },
     // 判断食谱困难程度
     difficultyView() {
       switch (this.difficulty) {

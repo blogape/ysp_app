@@ -1,0 +1,23 @@
+
+{
+    "config": {
+      "_comment": "The status value is test(test) or dev(development) or prod(product).",
+      "active": "prod",
+      "test": {
+        "scoketUrl": "http://192.168.1.126:9501/webSocketServer",
+        "urlApi": "http://192.168.1.52:8765",
+        "sharUrl": "http://192.168.1.52/nmenu/#/recipedetail/"
+      },
+      "dev": {
+        "scoketUrl": "http://192.168.1.243:9501/webSocketServer",
+        "urlApi": "http://192.168.1.243:8765",
+        "sharUrl": "http://192.168.1.52/nmenu/#/recipedetail/"
+      },
+      "prod": {
+          "scoketUrl": "https://recipe.eg-live.com/webSocketServer",
+          "urlApi": "https://recipe.eg-live.com",
+          "sharUrl": "https://recipe.eg-live.com/nmenu/#/recipedetail/"
+      }
+    }
+  }
+  

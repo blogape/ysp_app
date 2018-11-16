@@ -2,21 +2,23 @@
     <div class="steakCokkie">
         <Header :isshare='false'>牛排机</Header>
         <!-- 头部 -->
+            <!-- <van-pull-refresh v-model="isLoading" @refresh="onRefresh"> -->
+
         <div class="ysp-header">
             <div class='left' @click='handleLock' >
                     <img src="../../assets/images/icon_lock_dis.png" id='lockimg'/>
                     <span :class="{lockcolor:iscolor}">童锁</span>
             </div>
-             <div class='right'>
+             <!-- <div class='right'>
                     <img src="../../assets/images/icon_scan_dis.png"/>
                      <span>扫一扫</span>
-            </div>
+            </div> -->
         </div>
         <!-- 环形倒计时 -->
         <div class="content">
         <van-circle
         v-model="currentRate"
-        color="#3CADFF"
+        :color='rotecolor'
         fill="#fff"
         size="20rem"
         layer-color="#ddd"
@@ -45,7 +47,11 @@
         <van-button round type="danger" :class="{ active: isActive,round:isround}" @click='handleSteakStopCookie' :disabled='topdisblead'>停止</van-button>
         <van-button round type="danger" :class="{ active: isActive,round:isround}" @click='handleAginStartCookie' v-if='isaginbtn'>开始煎烤</van-button>
         </div>
+        
                     <Recipetemplate v-for='(item,key) in  steakdata.list' :key='key' :data='item'></Recipetemplate>
+       <!-- </van-pull-refresh> -->
+
+    <Loading v-if='isloadinghide' class='loading'></Loading>
 
     </div>
 </template>
@@ -58,6 +64,7 @@ import { handleUserData } from "../../utils/appapi.js";
 import { Toast, Popup } from "vant";
 import {getApiUrl} from '../../utils/request.js';
 import Recipetemplate from "../../components/Recipetemplate/";
+import Loading from "../../components/Loading/";
 
 import {
   steackAgainCookie,
@@ -73,7 +80,10 @@ export default {
       currentRate: 0,
       timer: "--:--",
       steakdata:'',
-      rate: 0,
+      rotecolor:'#ddd',
+      rate: 10,
+      isLoading: false,
+      isloadinghide:true,
       iscolor: false,
       isclassstop: false,
       topdisblead: false,
@@ -91,10 +101,26 @@ export default {
   },
   components: {
     Header,
-    Recipetemplate
+    Recipetemplate,
+    Loading
   
   },
   methods: {
+
+   // 下拉刷新
+    // onRefresh() {
+    //   setTimeout(() => {
+    //     window.location.reload();
+    //     this.isLoading = false;
+    //   }, 500);
+    // },
+    // 获取用户token
+    getUserToken(){
+      // 获取用户token
+    handleUserData();
+    let userData = JSON.parse(localStorage.getItem("userData"));
+    this.token = userData.token;
+    },
     // 连接websock
     linkWebsock() {
       let SocketUrl=getApiUrl();
@@ -112,6 +138,7 @@ export default {
           stompClient.subscribe("/user/" + macId + "/msg", response => {
             var obj = JSON.parse(response.body);
             this.statusText = obj.iotPlatformMessages.runstateText;
+            this.isloadinghide=false;
             if (
               obj.iotPlatformMessages.runstateText == "待机" &&
               obj.iotPlatformMessages.data.over == 0
@@ -163,6 +190,9 @@ export default {
               let StartMinuteH =
                 timecomputed.downTimeSetMinute * 60 +
                 timecomputed.downTimeSetSecond;
+                if(this.rate>0){
+                  this.rotecolor='#3CADFF'
+                }
               //  判断剩余总时间是否归0
               if (total == 1) {
                 this.rate = 0;
@@ -199,7 +229,8 @@ export default {
     },
     // 开始煎烤
     async handleAginStartCookie() {
-      let jk='再次启动';
+      this.getUserToken();
+      let jk='1';
       let cookiedata = await steackAgainCookie(
         this.iotMacModelId,
         this.macId,
@@ -216,6 +247,7 @@ export default {
         message: "你要停止此食谱吗？"
       })
         .then(async () => {
+            this.getUserToken();
           let cookiedata = await steakStopCookie(
             this.iotMacModelId,
             this.macId,
@@ -230,6 +262,8 @@ export default {
     },
     // 开启烹饪
     async handleStartCookie() {
+                  this.getUserToken();
+
       // alert(this.recipeid);
         let text='开启烹饪';
       let cookiedata = await startCookie(
@@ -243,8 +277,10 @@ export default {
     },
     // 童锁
     async handleLock(e) {
-      let open = "童锁开";
-      let over = "童锁关";
+                  this.getUserToken();
+
+      let open = "3";
+      let over = "4";
       if (this.lockstatus == 1) {
         let cookiedata = await methodclock(
           this.iotMacModelId,
@@ -298,16 +334,17 @@ export default {
     }
   },
   mounted() {
+   
     // 链接webscoke
     this.linkWebsock();
     //进入页面就开始烹饪
-    this.handleStartCookie();
+    // this.handleStartCookie();
     // 获取牛排机食谱列表数据
     this.steakData();
   },
   computed: {},
   created() {
-    this.title=this.$route.query.title<5?this.$route.query.title:this.$route.query.title.substring(0, 8) + "...";
+    this.title=this.$route.query.title<5?this.$route.query.title:this.$route.query.title.substring(0, 6) + "...";
     this.macId = this.$route.query.macId;
     this.iotMacModelId = this.$route.query.iotMacModelId;
     this.recipeid = this.$route.query.recipeid;
@@ -466,6 +503,7 @@ export default {
         transform: rotate(360deg);
       }
     }
+   
   }
   .cookie-btn {
     width: 100%;
@@ -534,8 +572,11 @@ export default {
 @media (device-height: 667px) and (-webkit-min-device-pixel-ratio: 2) {
   /* 兼容iphone6 */
   ul#countdown li {
-    margin-top: -6.5rem !important;
-    margin-left: -9rem !important;
+    margin-top: -6.2rem !important;
+    margin-left: -10.1rem !important;
   }
 }
+ .loading{
+      top: 4.5rem !important;
+    }
 </style>

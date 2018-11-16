@@ -22,17 +22,31 @@ export default {
     "isshare"
   ],
   data() {
-    return {
-    
-    };
+    return {};
   },
   components: {
     Search
   },
+  created() {},
   mounted() {},
   methods: {
     handleBack() {
-      this.$router.go(-1);
+      if (typeof EG_Recipes != "undefined") {
+        var rootType = localStorage.getItem("rootType");
+        console.log(rootType);
+        if (rootType == 1 || rootType == null) {
+          this.$router.back(-1);
+        } else {
+          EG_Recipes.callBack(
+            JSON.stringify({
+              callBackNative: 1
+              // urlAddr: "http://192.168.1.52/nmenu/#/"
+            })
+          );
+        }
+      } else {
+        this.$router.back(-1);
+      } 
     },
     handleShow() {
       this.$refs.isSearch.show = true;

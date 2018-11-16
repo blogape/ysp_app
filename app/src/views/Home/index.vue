@@ -35,13 +35,13 @@
         <li>
             <router-link to='/category'>
           <img src="../../assets/images/icon_classify.png"/>
-          <span>食谱分类</span>
+          <span>食谱分类{{spliteImg('12')}}</span>
           </router-link>       
         </li>
         <li>
             <router-link to='/hotrecipe'>
           <img src="../../assets/images/icon_hot.png"/>
-           <span>热门食谱</span>
+           <span>热门食谱 </span>
           </router-link>       
         </li>
         <li>
@@ -79,6 +79,37 @@
     <Loading v-if='myisloading'></Loading>
     <!-- 弹出搜索页面-->
       <Search  ref='isSearch'></Search>
+      <span class="iscookie" v-if='showCooie' @click='cookiebtn'><img src="../../assets/images/icon_video.gif"/></span>
+      <van-popup v-model="show">
+          <div class="cookie-state">
+  <div class="title">
+    烹饪食谱列表
+  </div>
+  <div class='content'>
+    <ul>
+      <li v-for='(item,key) in itemdata' :key='key' v-if='item.macName=="智能牛排机"'>
+        <router-link  :to="{ name:'SteakCookie', query: { iotMacModelId: item.iotMacModelId ,recipeid:item.recipeId,macId:item.macId,title:item.title}}"  :id='item.recipeId'>
+          <i><img :src="item.coverimg"/></i>
+        <div>
+          <font>{{item.title.length>22?item.title.substring(0,22)+'...':item.title}} </font>
+        </div>
+        </router-link>
+      </li>
+       <li v-for='(item,key) in itemdata' :key='key' v-if='item.macName=="智能面包机"'>
+        <router-link  :to="{ name:'BreadCookie', query: { iotMacModelId: item.iotMacModelId ,recipeid:item.recipeId,macId:item.macId,title:item.title}}"  :id='item.recipeId'>
+          <i><img :src="item.coverimg"/></i>
+        <div>
+          <font>{{item.title.length>22?item.title.substring(0,22)+'...':item.title}} </font>
+        </div>
+        </router-link>
+      </li>
+    </ul>
+  </div> 
+<div class="cancel" @click='cancel'>
+取消
+  </div>
+  </div>
+  </van-popup>
   </div>
 </template>
 
@@ -88,9 +119,14 @@ import Theme from "../../components/Theme/";
 import Loading from "../../components/Loading/";
 import Recipetemplate from "../../components/Recipetemplate/";
 import Search from "../../components/Search/";
-import { homebanner, getElement } from "../../services/api.js";
+// import {imgSplite}  from '../../utils/util.js';
+import {
+  homebanner,
+  getElement,
+  getUserCookieing
+} from "../../services/api.js";
 import { handleUserData } from "../../utils/appapi.js";
-
+import { Popup, Toast } from "vant";
 export default {
   components: {
     Article,
@@ -101,15 +137,28 @@ export default {
   },
   data() {
     return {
+      showCooie: true,
+      show: false,
       moreview: false,
+      itemdata: "",
       isSearch: false,
       isLoading: false,
-      myisloading: true,
+      myisloading: false,
       bannerdata: "",
       elementdata: ""
     };
   },
+  created() {
+    // setInterval(() => {
+    //       this.getUserCookieing();
+    //     }, 1000);
+  },
   mounted() {
+    // localStorage.removeItem("userData");
+
+    // console.log(store.state.LOADING);
+
+    // this.getUserCookieing();
     this.onloading();
     this.getBannerData();
     this.getElement();
@@ -150,6 +199,28 @@ export default {
         JSON.stringify({ funName: "nativeScanReuslt", rootType: 5 })
       );
     },
+    // 获取用户是否正在烹饪
+    async cookiebtn() {
+      handleUserData();
+      let userData = JSON.parse(localStorage.getItem("userData"));
+      let userCooikeData = await getUserCookieing(userData.token);
+        let isShow = userCooikeData.data.length;
+        this.itemdata = userCooikeData.data;
+        if (isShow > 0) {
+          this.show = true;
+        } else {
+          Toast("您当前没有正在烹饪的食谱！");
+        }
+      
+    },
+    // 隐藏烹饪列表
+    cancel() {
+      this.show = false;
+    },
+    //显示烹饪列表
+    // cookiebtn() {
+    //   this.show = true;
+    // },
     // 下拉刷新
     onRefresh() {
       setTimeout(() => {
@@ -162,41 +233,46 @@ export default {
       this.moreview ? (this.moreview = false) : (this.moreview = true);
       e.stopPropagation();
     }
+  },
+  computed:{
+    spliteImg(url){
+        return url
+    }
   }
 };
 </script>
 
 <style lang='less' scoped>
-.nav ul li a img{
+.nav ul li a img {
   height: 5rem;
 }
 .nav {
-    margin-top: 0.5rem;
-    background-color: #fff;
-    padding: 1rem 0;
-    ul {
-      display: flex;
-      width: 100%;
-      li {
-        flex: 1;
-        text-align: center;
-        a {
-          display: inline-block;
-          img {
-            height: 5rem;
-          }
-          span {
-            height: 2rem;
-            line-height: 1.6rem;
-            display: block;
-            color: #4a4a4a;
-            letter-spacing: 0;
-            font-size: 1.2rem;
-          }
+  margin-top: 0.5rem;
+  background-color: #fff;
+  padding: 1rem 0;
+  ul {
+    display: flex;
+    width: 100%;
+    li {
+      flex: 1;
+      text-align: center;
+      a {
+        display: inline-block;
+        img {
+          height: 5rem;
+        }
+        span {
+          height: 2rem;
+          line-height: 1.6rem;
+          display: block;
+          color: #4a4a4a;
+          letter-spacing: 0;
+          font-size: 1.2rem;
         }
       }
     }
   }
+}
 
 .home {
   width: 100%;
@@ -253,6 +329,7 @@ export default {
   .banner {
     padding: 0 1rem 0.5rem 1rem;
     border-radius: 3px;
+    height: 14.5rem;
     overflow: hidden;
     background-color: #fff;
     img {
@@ -367,6 +444,88 @@ export default {
         }
       }
     }
+  }
+  .iscookie {
+    position: fixed;
+    right: 0.5rem;
+    top: 16rem;
+    img {
+      height: 5rem;
+      width: auto;
+    }
+  }
+  .cookie-state {
+    width: 25rem;
+    border-radius: 3rem;
+    overflow: hidden;
+    border-radius: 5rem;
+    height: auto;
+    background-color: #fff;
+    .title {
+      width: 100%;
+      color: #4a4a4a;
+      text-align: center;
+      font-size: 1.5rem;
+      line-height: 4rem;
+      height: 4rem;
+      border-bottom: 0.5px solid #ccc;
+    }
+    .cancel {
+      height: 4rem;
+      width: 100%;
+      color: #4a4a4a;
+      letter-spacing: -0.41px;
+      line-height: 4rem;
+      font-size: 1.6rem;
+      text-align: center;
+    }
+    .content {
+      height: auto;
+      overflow: hidden;
+      ul {
+        li:last-child {
+          border-bottom: 0.5px solid #ccc;
+        }
+        li {
+          height: 6rem;
+          position: relative;
+
+          a {
+            display: flex;
+
+            i {
+              width: 6rem;
+              display: inline-block;
+              text-align: left;
+              padding: 1rem;
+              img {
+                height: 4rem;
+                width: 100%;
+              }
+            }
+            span {
+              display: block;
+              margin-top: 1rem;
+              font-size: 1.3rem;
+            }
+            div {
+              flex: 1;
+              font {
+                display: block;
+                margin-top: -0.5rem;
+                line-height: 2rem;
+                margin-top: 1rem;
+                color: #4a4a4a;
+                font-size: 1.4rem;
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+  .van-popup {
+    border-radius: 1rem;
   }
 }
 </style>

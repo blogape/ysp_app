@@ -7,7 +7,7 @@ export default new Router({
   base: process.env.BASE_URL,
   routes: [
     {
-      path: "/nmenu",
+      path: "/",
       meta: {
         title: "首页"
       },
@@ -71,7 +71,7 @@ export default new Router({
       component: resolve => require(["./views/ThemeRecipe/index.vue"], resolve)
     },
     {
-      path: "/search/:id",
+      path: "/search/:id/:pid",
       name:'Search',
       meta: {
         title: "搜索"

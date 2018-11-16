@@ -91,7 +91,7 @@ export default {
     hideSearch(id) {
        this.$router.push({
         name: "Search",
-        params: { id: id }
+        params: { id: id,pid:0}
       });
       this.show = false;
     },
@@ -145,7 +145,7 @@ export default {
           strog.push(this.inputValue);
           localStorage.setItem("history", strog);
         }
-        this.$router.push({ name: "Search", params: { id: this.inputValue } });
+        this.$router.push({ name: "Search", params: { id: this.inputValue,pid:0 } });
         this.show = false;
 
       }

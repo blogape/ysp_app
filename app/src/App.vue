@@ -12,7 +12,11 @@ export default {
     Loading
   },
   data() {
-    return {};
+    return {
+    };
+  },
+  created(){
+      console.log(this.$store.state.LOADING);
   },
   computed: {
     ...mapState(["LOADING"])
