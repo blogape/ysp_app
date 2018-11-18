@@ -1,27 +1,30 @@
 // console.log(Data)
 
   function Datas(){
-    var xmlhttp;
-	if (window.XMLHttpRequest)
-	{
-		//  IE7+, Firefox, Chrome, Opera, Safari 浏览器执行代码
-		xmlhttp=new XMLHttpRequest();
-	}
-	else
-	{
-		// IE6, IE5 浏览器执行代码
-		xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
-	}
-	xmlhttp.onreadystatechange=function()
-	{
-		if (xmlhttp.readyState==4 && xmlhttp.status==200)
-		{
-			console.log( JSON.parse(xmlhttp.responseText) );
-			return JSON.parse(xmlhttp.responseText)
-		}
-	}
-	xmlhttp.open("GET","../config/config.json",true);
-	xmlhttp.send();
+	 
+		return new Promise(function(resolve,reject){
+			var xmlhttp;
+			if (window.XMLHttpRequest)
+			{
+				// IE7+, Firefox, Chrome, Opera, Safari 浏览器执行代码
+				xmlhttp=new XMLHttpRequest();
+			}
+			else
+			{
+				// IE6, IE5 浏览器执行代码
+				xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
+			}
+			xmlhttp.onreadystatechange=function()
+			{
+				if (xmlhttp.readyState==4 && xmlhttp.status==200)
+				{
+					resolve(JSON.parse(xmlhttp.responseText));
+				}
+			}
+			xmlhttp.open("GET","../config/config.json",true);
+			xmlhttp.send();
+		})
+		
 }
 
 //回调用户信息

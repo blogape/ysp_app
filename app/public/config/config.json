@@ -2,7 +2,7 @@
 {
     "config": {
       "_comment": "The status value is test(test) or dev(development) or prod(product).",
-      "active": "test",
+      "active": "dev",
       "test": {
         "scoketUrl": "http://192.168.1.126:9501/webSocketServer",
         "urlApi": "http://192.168.1.52:8765",
