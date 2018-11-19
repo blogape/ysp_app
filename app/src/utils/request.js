@@ -37,7 +37,6 @@ urlApi.then(function(data){
         scoketUrl = ApiUrl.dev.scoketUrl;
         sharUrl = ApiUrl.dev.sharUrl;
       }
-    console.log(baseUrl);
     axios.defaults.baseURL = baseUrl;
     // response interceptor
     axios.interceptors.response.use(

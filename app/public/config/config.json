@@ -2,9 +2,10 @@
 {
     "config": {
       "_comment": "The status value is test(test) or dev(development) or prod(product).",
-      "active": "dev",
+      "active": "prod",
       "test": {
-        "scoketUrl": "http://192.168.1.126:9501/webSocketServer",
+        
+        "scoketUrl": "http://192.168.1.52:9501/webSocketServer",
         "urlApi": "http://192.168.1.52:8765",
         "sharUrl": "http://192.168.1.52/nmenu/#/recipedetail/"
       },

@@ -1,5 +1,6 @@
 
 
+
 export //回调方法
 function nativeScanReuslt(scanData) {
   //to do
