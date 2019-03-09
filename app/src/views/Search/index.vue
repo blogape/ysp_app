@@ -62,6 +62,7 @@ export default {
     handleSearch() {
       document.body.scrollTop = 0;
       this.$refs.isSearch.show = true;
+
     }
   },
   mounted() {

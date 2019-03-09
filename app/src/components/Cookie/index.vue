@@ -9,12 +9,14 @@
         <!-- 标题 -->
         <div class="title">{{titlesplit}}</div>
         <!-- 标签 -->
-        <div class="label" v-show="data.listTags!==null">
+        <!-- <div class="label" v-show="data.listTags!==null">
           <ul>
             <li v-for="(item,key) in data.listTags" :key="key">{{item}}</li>
           </ul>
-        </div>
-            
+        </div> -->
+        <div class="time">
+          {{data.createTime}}
+          </div>      
             <!-- 作者 -->
         <div class="author">
           {{data.nickname}}
@@ -96,9 +98,11 @@ export default {
       }
     }
     .right {
-            // flex: 1;
             width: 50%;
-      // padding: 1rem 2rem;
+            .time{
+                font-size: 1.3rem;
+                        color: #898989;
+            }
       .title {
         height: 3rem;
         overflow: hidden;

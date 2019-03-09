@@ -24,9 +24,10 @@
     <!-- banner图 -->
     <div class="banner">
   <van-swipe :autoplay="3000" :touchable="true">
-        <van-swipe-item v-for='(item,key) in bannerdata' :key='key' v-if='item.type==0'><router-link :to="{ name: 'Product', params: { id: item.relatedId }}" > <img :src="item.image"/></router-link></van-swipe-item>
-        <van-swipe-item v-for='(item,key) in bannerdata' :key='key' v-if='item.type==1'><router-link :to="{ name: 'Article', params: { id: item.relatedId }}" > <img :src="item.image"/></router-link></van-swipe-item>
-        <van-swipe-item v-for='(item,key) in bannerdata' :key='key' v-if='item.type==2'><router-link :to="{ name: 'Themrecipe', params: { id: item.relatedId }}" > <img :src="item.image"/></router-link></van-swipe-item>
+    <!-- <img :src="item.image"/> -->
+        <van-swipe-item v-for='(item,key) in bannerdata' :key='key' v-if='item.type==0'><router-link :to="{ name: 'Product', params: { id: item.relatedId }}" > <TemplateImg :msg='item.image'></TemplateImg> </router-link></van-swipe-item>
+        <van-swipe-item v-for='(item,key) in bannerdata' :key='key' v-if='item.type==1'><router-link :to="{ name: 'Article', params: { id: item.relatedId }}" >  <TemplateImg :msg='item.image'></TemplateImg></router-link></van-swipe-item>
+        <van-swipe-item v-for='(item,key) in bannerdata' :key='key' v-if='item.type==2'><router-link :to="{ name: 'Themrecipe', params: { id: item.relatedId }}" >  <TemplateImg :msg='item.image'></TemplateImg></router-link></van-swipe-item>
   </van-swipe>
     </div>
     <!-- 导航 -->
@@ -110,6 +111,7 @@
   </div>
   </div>
   </van-popup>
+  <button style='width:100px;height:30px;' @click='saoyisao'>扫一扫</button>
   </div>
 </template>
 
@@ -119,6 +121,9 @@ import Theme from "../../components/Theme/";
 import Loading from "../../components/Loading/";
 import Recipetemplate from "../../components/Recipetemplate/";
 import Search from "../../components/Search/";
+import Img from '../../components/Img/';
+import TemplateImg from '../../components/Img/';
+
 // import {imgSplite}  from '../../utils/util.js';
 import {
   homebanner,
@@ -133,7 +138,8 @@ export default {
     Search,
     Theme,
     Loading,
-    Recipetemplate
+    Recipetemplate,
+    TemplateImg
   },
   data() {
     return {
@@ -169,6 +175,22 @@ export default {
     });
   },
   methods: {
+
+// saoyisao(){
+// var map = null;
+// if(!map){
+//   alert("123");
+// 		map = plus.maps.create('map', {
+// 			top:'100px',
+// 			left:'0px',
+// 			width: '100%',
+// 			height: '500px',
+// 			position: 'static'
+// 		});
+// 		plus.webview.currentWebview().append(map);
+// 	}
+// },
+
     onloading() {
       setTimeout(() => {
         this.myisloading = false;
@@ -327,13 +349,15 @@ export default {
     }
   }
   .banner {
-    padding: 0 1rem 0.5rem 1rem;
-    border-radius: 3px;
+    // padding: 0 1rem 0.5rem 1rem;
+    padding:0;
+    width: 100%;
+    // border-radius: 3px;
     height: 14.5rem;
     overflow: hidden;
     background-color: #fff;
     img {
-      border-radius: 5px;
+      // border-radius: 5px;
       width: 100%;
     }
   }
@@ -387,7 +411,6 @@ export default {
     position: absolute;
     top: 0;
     right: 0;
-
     height: auto;
     bottom: 0;
     width: 100px;
@@ -489,7 +512,7 @@ export default {
         li {
           height: 6rem;
           position: relative;
-
+          // overflow: hidden;
           a {
             display: flex;
 

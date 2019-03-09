@@ -199,13 +199,14 @@ export function brandsupperstop(iotMacModelId, macId, recipeId, token) {
 }
 // 开始烹饪
 
-export function startCookie(iotMacModelId, macId, recipeId, token, text) {
+export function startCookie(iotMacModelId, macId, recipeId, token, totaltime) {
   const data = {
     iotMacModelId: iotMacModelId,
     macId: macId,
     recipeId: recipeId,
     instructionType: 1,
     type: 1,
+    totalTime:totaltime
   };
   return request({
     url: "/api/cooking-service/cookingRecord/macStart?token=" + token,
@@ -310,3 +311,23 @@ export function getUserCookieing(token) {
     method: "get"
   });
 }
+
+
+//查询设备状态
+
+export  function searchEquipments(did,token){
+  return request({
+    url:"/api/iot-service/iot/getMacDetails?did="+did+"&token="+token,
+    method: "get"
+  })
+  }
+
+
+  //查询食谱时间
+
+  export function serachReicpeTime(recipeid,token){
+    return request({
+      url:"/api/iot-service/instruction/time?recipeId="+recipeid+"&iotMacModelId=POOvcN&token="+token,
+      method: "get"
+    })
+  }

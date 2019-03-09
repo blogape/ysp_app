@@ -12,19 +12,25 @@
     </div>
     <!-- 图片 -->
     <div class="img">
-        <img :src='data.coverimg'/>
+              <TemplateImg :msg='data.coverimg'></TemplateImg>
+
     </div>
     </div>
 </router-link> 
 </template>
 
 <script>
+import TemplateImg from '../../components/Img/';
+
 export default {
   props: {
     data: {
       type: Object
     }
-  }
+  },
+  components:{
+    TemplateImg
+  },
 };
 </script>
 
@@ -54,7 +60,9 @@ export default {
       font-size: 1.2rem;
     }
     .img {
+      
       img {
+        
         width: 100%;
       }
     }

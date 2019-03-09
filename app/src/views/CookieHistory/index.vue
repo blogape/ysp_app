@@ -1,28 +1,28 @@
 <template>
-<!-- 烹饪记录 -->
-    <div class="cookiehistory">
+  <!-- 烹饪记录 -->
+  <div class="cookiehistory">
     <Header>烹饪记录</Header>
     <div class="content">
-        <div class="list" v-for='(item,key) in recipedata.list' :key='key' >
-        <Recipetemplate :data='item'></Recipetemplate>
+      <div class="list" v-for="(item,key) in recipedata.list" :key="key">
+        <Recipetemplate :data="item"></Recipetemplate>
         <!-- 删除 -->
         <div class="delete">
-            <span @click='handleDelete(item.primaryId)'>删除</span>
+          <span @click="handleDelete(item.primaryId)">删除</span>
         </div>
+      </div>
     </div>
-    </div>
-      <NotFind v-if='isnot'>收藏夹空空一片 o(╥﹏╥)o </NotFind>
-    </div>
+    <NotFind v-if="isnot">您没有烹饪记录喔！ o(╥﹏╥)o</NotFind>
+  </div>
 </template>
 
 <script>
 import Header from "../../components/Header/";
-import Recipetemplate from "../../components/Recipetemplate/";
+import Recipetemplate from "../../components/Cookie/";
 import { getCookieHistory, deletCookieData } from "../../services/api.js";
 import { Dialog, Toast } from "vant";
 import NotFind from "../../components/NotFind/";
 import { handleUserData } from "../../utils/appapi.js";
-
+// handleUserData();
 export default {
   data() {
     return {
@@ -31,14 +31,21 @@ export default {
       isnot: false
     };
   },
-  created(){
-    
-    handleUserData();
+  beforeCreate(){
+       handleUserData();
+  },
+  created() {
     setTimeout(()=>{
-  this.userToken = JSON.parse(localStorage.getItem("userData"));
-    this.getcolledata();
-    },100)
-  
+    handleUserData();
+     this.userToken = JSON.parse(localStorage.getItem("userData"));
+     this.getcolledata();
+
+    },500);
+    handleUserData();
+        // this.getcolledata();
+    // setTimeout(() => {
+    // this.getcolledata();
+    // }, 300);
   },
   components: {
     Header,
@@ -46,15 +53,25 @@ export default {
     NotFind
   },
   mounted() {
-  
+        handleUserData();
+
+      // this.getcolledata();
   },
   methods: {
     //   获取烹饪记录
-    async getcolledata() {
-      let colldata = await getCookieHistory(this.userToken.token);
-      this.recipedata = colldata.data;
-      if (this.recipedata.list.length < 1) {
-        this.isnot = true;
+   async  getcolledata() {
+      //  alert(this.userToken.token);
+      if (this.userToken.token == undefined) {
+        handleUserData();
+        this.getcolledata();
+        this.reset();
+      } else {
+        let colldata = await getCookieHistory(this.userToken.token);
+        // alert(colldata.msg)
+        this.recipedata = colldata.data;
+        if (this.recipedata.list.length < 1) {
+          this.isnot = true;
+        }
       }
     },
     // 删除收藏记录
@@ -68,16 +85,20 @@ export default {
           if (deletecolldata.code == 0) {
             Toast("您删除成功了哟 o(╥﹏╥)o~");
             this.getcolledata();
-          }else if(deletecolldata.code == 9501){
+          } else if (deletecolldata.code == 9501) {
             Toast("该食谱正在烹饪中，不能删除喔！(¯﹃¯)");
-
-          }else if(deletecolldata.code == 1){
+          } else if (deletecolldata.code == 1) {
             Toast("您删除失败了哟 o(╥﹏╥)o~");
           }
         })
         .catch(() => {
           // on cancel
         });
+    },
+    reset(){
+        handleUserData();
+        this.userToken = JSON.parse(localStorage.getItem("userData"));
+        this.getcolledata();
     }
   }
 };

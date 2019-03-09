@@ -9,7 +9,7 @@ Vue.use(Vant);
 Vue.config.productionTip = false;
 // 添加左右切换效果
 router.beforeEach((to, from, next) => {
-  store.commit('showLoading');
+  // store.commit('showLoading');
   next();
 })
 

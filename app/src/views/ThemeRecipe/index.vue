@@ -7,7 +7,8 @@
    </div>
    <!-- 作者 -->
    <div class="author">
-       <img :src="themdata.headimg"/>{{themdata.nickname}}
+      <TemplateImg :msg='themdata.headimg'></TemplateImg>
+    {{themdata.nickname}}
    </div>
    <!-- 描述 -->
    <div class="describle">
@@ -30,6 +31,8 @@
 import Header from "../../components/Header/";
 import HotRecipe from "../../components/Hottemplate/";
 import { getThemData } from "../../services/api.js";
+import TemplateImg from '../../components/Img/';
+
 export default {
   data() {
     return {
@@ -39,7 +42,8 @@ export default {
   },
   components: {
     Header,
-    HotRecipe
+    HotRecipe,
+    TemplateImg
   },
   methods: {
     // 获取主题食谱列表

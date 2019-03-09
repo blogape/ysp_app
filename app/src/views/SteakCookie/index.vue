@@ -1,24 +1,23 @@
 <template>
-    <div class="steakCokkie">
-        <Header :isshare='false'>牛排机</Header>
-        <!-- 头部 -->
-            <!-- <van-pull-refresh v-model="isLoading" @refresh="onRefresh"> -->
-
-        <div class="ysp-header">
-            <div class='left' @click='handleLock' >
-                    <img src="../../assets/images/icon_lock_dis.png" id='lockimg'/>
-                    <span :class="{lockcolor:iscolor}">童锁</span>
-            </div>
-             <!-- <div class='right'>
+  <div class="steakCokkie">
+    <Header :isshare="false">智能牛排机</Header>
+    <!-- 头部 -->
+    <!-- <van-pull-refresh v-model="isLoading" @refresh="onRefresh"> -->
+    <div class="ysp-header">
+      <div class="left" @click="handleLock">
+        <img src="../../assets/images/icon_lock_dis.png" id="lockimg">
+        <span :class="{lockcolor:iscolor}">童锁</span>
+      </div>
+      <!-- <div class='right'>
                     <img src="../../assets/images/icon_scan_dis.png"/>
                      <span>扫一扫</span>
-            </div> -->
-        </div>
-        <!-- 环形倒计时 -->
-        <div class="content">
-        <van-circle
+      </div>-->
+    </div>
+    <!-- 环形倒计时 -->
+    <div class="content">
+      <van-circle
         v-model="currentRate"
-        :color='rotecolor'
+        :color="rotecolor"
         fill="#fff"
         size="20rem"
         layer-color="#ddd"
@@ -27,33 +26,45 @@
         :speed="100"
         :clockwise="false"
         :stroke-width="18"
-/>
-    <!-- 时间 -->
-    <span class='test-time'>剩余时间</span>
-    <!-- 名称 -->
-    <span class="name">{{title}}</span>
-    <!-- 状态 -->
-    <span class="tatus">{{statusText}}</span>
+      />
+      <!-- 时间 -->
+      <span class="test-time">剩余时间</span>
+      <!-- 名称 -->
+      <span class="name">{{title}}</span>
+      <!-- 状态 -->
+      <span class="tatus">{{statusText}}</span>
       <!-- 动画圈圈 -->
-              <ul id="countdown" v-if='isanimate'>
-                <li>
-                <i><b class="dotdot"></b></i>
-                <span class="seconds"></span>
-            </li>
-              </ul>
-            </div>
-        <!-- 按钮组 -->
-        <div class="cookie-btn">
-        <van-button round type="danger" :class="{ active: isActive,round:isround}" @click='handleSteakStopCookie' :disabled='topdisblead'>停止</van-button>
-        <van-button round type="danger" :class="{ active: isActive,round:isround}" @click='handleAginStartCookie' v-if='isaginbtn'>开始煎烤</van-button>
-        </div>
-        
-                    <Recipetemplate v-for='(item,key) in  steakdata.list' :key='key' :data='item'></Recipetemplate>
-       <!-- </van-pull-refresh> -->
-
-    <Loading v-if='isloadinghide' class='loading'></Loading>
-
+      <ul id="countdown" v-if="isanimate">
+        <li>
+          <i>
+            <b class="dotdot"></b>
+          </i>
+          <span class="seconds"></span>
+        </li>
+      </ul>
     </div>
+    <!-- 按钮组 -->
+    <div class="cookie-btn">
+      <van-button
+        round
+        type="danger"
+        :class="{ active: isActive,round:isround}"
+        @click="handleSteakStopCookie"
+        :disabled="topdisblead"
+      >停止</van-button>
+      <van-button
+        round
+        type="danger"
+        :class="{ active: isActive,round:isround}"
+        @click="handleAginStartCookie"
+        v-if="isaginbtn"
+      >开始煎烤</van-button>
+    </div>
+
+    <Recipetemplate v-for="(item,key) in  steakdata.list" :key="key" :data="item"></Recipetemplate>
+    <!-- </van-pull-refresh> -->
+    <Loading v-if="isloadinghide" class="loading"></Loading>
+  </div>
 </template>
 <script>
 import Header from "../../components/Header/index.vue";
@@ -62,7 +73,7 @@ import locaactive from "../../assets/images/icon_lock_select.png";
 import loca from "../../assets/images/icon_lock_dis.png";
 import { handleUserData } from "../../utils/appapi.js";
 import { Toast, Popup } from "vant";
-import {getApiUrl} from '../../utils/request.js';
+import { getApiUrl } from "../../utils/request.js";
 import Recipetemplate from "../../components/Recipetemplate/";
 import Loading from "../../components/Loading/";
 
@@ -71,19 +82,20 @@ import {
   steakStopCookie,
   startCookie,
   methodclock,
-  cookieSearch
+  cookieSearch,
+  searchEquipments
 } from "../../services/api.js";
 export default {
-
   data() {
     return {
       currentRate: 0,
       timer: "--:--",
-      steakdata:'',
-      rotecolor:'#ddd',
+      steakdata: "",
+      rotecolor: "#ddd",
       rate: 10,
+      defaluttime:'',
       isLoading: false,
-      isloadinghide:true,
+      isloadinghide: true,
       iscolor: false,
       isclassstop: false,
       topdisblead: false,
@@ -91,7 +103,7 @@ export default {
       isActive: false,
       isround: true,
       statusText: "",
-      title:'',
+      title: "",
       isaginbtn: false,
       macId: "",
       iotMacModelId: "",
@@ -103,11 +115,9 @@ export default {
     Header,
     Recipetemplate,
     Loading
-  
   },
   methods: {
-
-   // 下拉刷新
+    // 下拉刷新
     // onRefresh() {
     //   setTimeout(() => {
     //     window.location.reload();
@@ -115,15 +125,15 @@ export default {
     //   }, 500);
     // },
     // 获取用户token
-    getUserToken(){
+    getUserToken() {
       // 获取用户token
-    handleUserData();
-    let userData = JSON.parse(localStorage.getItem("userData"));
-    this.token = userData.token;
+      handleUserData();
+      let userData = JSON.parse(localStorage.getItem("userData"));
+      this.token = userData.token;
     },
     // 连接websock
     linkWebsock() {
-      let SocketUrl=getApiUrl();
+      let SocketUrl = getApiUrl();
       let stompClient = null;
       let macId = this.macId;
       // 52为测试环境
@@ -138,7 +148,7 @@ export default {
           stompClient.subscribe("/user/" + macId + "/msg", response => {
             var obj = JSON.parse(response.body);
             this.statusText = obj.iotPlatformMessages.runstateText;
-            this.isloadinghide=false;
+            this.isloadinghide = false;
             if (
               obj.iotPlatformMessages.runstateText == "待机" &&
               obj.iotPlatformMessages.data.over == 0
@@ -164,6 +174,12 @@ export default {
               this.iscolor = true;
               this.isActive = true;
               this.topdisblead = true;
+            } else {
+              document.getElementById("lockimg").src = loca;
+              this.isround = true;
+              this.iscolor = false;
+              this.isActive = false;
+              this.topdisblead = false;
             }
             //  计算剩余总时间
             var total =
@@ -190,13 +206,13 @@ export default {
               let StartMinuteH =
                 timecomputed.downTimeSetMinute * 60 +
                 timecomputed.downTimeSetSecond;
-                if(this.rate>0){
-                  this.rotecolor='#3CADFF'
-                }
+              if (this.rate > 0) {
+                this.rotecolor = "#3CADFF";
+              }
               //  判断剩余总时间是否归0
               if (total == 1) {
                 this.rate = 0;
-                this.timer = "--:--";
+                this.timer = "00:01";
                 return false;
               }
               // 时间跟环形进度对比换算
@@ -230,7 +246,7 @@ export default {
     // 开始煎烤
     async handleAginStartCookie() {
       this.getUserToken();
-      let jk='1';
+      let jk = "1";
       let cookiedata = await steackAgainCookie(
         this.iotMacModelId,
         this.macId,
@@ -247,7 +263,7 @@ export default {
         message: "你要停止此食谱吗？"
       })
         .then(async () => {
-            this.getUserToken();
+          this.getUserToken();
           let cookiedata = await steakStopCookie(
             this.iotMacModelId,
             this.macId,
@@ -262,10 +278,10 @@ export default {
     },
     // 开启烹饪
     async handleStartCookie() {
-                  this.getUserToken();
+      this.getUserToken();
 
       // alert(this.recipeid);
-        let text='开启烹饪';
+      let text = "开启烹饪";
       let cookiedata = await startCookie(
         this.iotMacModelId,
         this.macId,
@@ -277,7 +293,7 @@ export default {
     },
     // 童锁
     async handleLock(e) {
-                  this.getUserToken();
+      this.getUserToken();
 
       let open = "3";
       let over = "4";
@@ -314,27 +330,29 @@ export default {
         }
       }
     },
-     // 拿到牛排机食谱数据
+    // 拿到牛排机食谱数据
     async steakData() {
-            let argumast='牛排机';
+      let argumast = "牛排机";
 
       let steakdata = await cookieSearch(argumast);
       // this.steakdata = steakdata.data;
       if (steakdata.data.list.length > 0) {
-          let breadfilter = steakdata.data.list;
-          this.steakdata = steakdata.data;
-          this.steakdata.list = [];
-          for (let i = 0; i < breadfilter.length; i++) {
-            if (breadfilter[i].id != this.recipeid) {
-              this.steakdata.list.push(breadfilter[i]);
-            }
+        let breadfilter = steakdata.data.list;
+        this.steakdata = steakdata.data;
+        this.steakdata.list = [];
+        for (let i = 0; i < breadfilter.length; i++) {
+          if (breadfilter[i].id != this.recipeid) {
+            this.steakdata.list.push(breadfilter[i]);
           }
-          }
+        }
+      }
       // console.log(steakdata);
     }
   },
+  beforeDestroy () {
+    clearInterval(this.defaluttime)
+  },
   mounted() {
-   
     // 链接webscoke
     this.linkWebsock();
     //进入页面就开始烹饪
@@ -344,7 +362,30 @@ export default {
   },
   computed: {},
   created() {
-    this.title=this.$route.query.title<5?this.$route.query.title:this.$route.query.title.substring(0, 6) + "...";
+    setTimeout(() => {
+      let getItem = localStorage.getItem("cookiereload");
+      if (getItem == null) {
+        localStorage.setItem("cookiereload", "1");
+        // location.reload()
+      }
+    }, 300);
+
+    setTimeout(() => {
+      localStorage.removeItem("cookiereload", "1");
+    }, 1000);
+
+   this.defaluttime= setInterval(async() => {
+       let data=await searchEquipments(this.$route.query.macId,this.token);
+        if(data.data.status=='待机'){
+         Toast("您已经终止了此食谱！");
+              this.$router.go(-1);
+            }
+    }, 4000);
+
+    this.title =
+      this.$route.query.title < 5
+        ? this.$route.query.title
+        : this.$route.query.title.substring(0, 6) + "...";
     this.macId = this.$route.query.macId;
     this.iotMacModelId = this.$route.query.iotMacModelId;
     this.recipeid = this.$route.query.recipeid;
@@ -374,13 +415,13 @@ export default {
       text-align: center;
       height: 8rem;
       float: left;
-      
+
       line-height: 5rem;
       .lockcolor {
         color: #3cadff;
       }
       img {
-                width:auto !important;
+        width: auto !important;
 
         line-height: 5rem;
         margin-top: 1.5rem;
@@ -396,7 +437,7 @@ export default {
       line-height: 5rem;
       img {
         line-height: 5rem;
-        width:auto !important;
+        width: auto !important;
         margin-top: 1.5rem;
         vertical-align: middle;
         height: 5rem;
@@ -503,7 +544,6 @@ export default {
         transform: rotate(360deg);
       }
     }
-   
   }
   .cookie-btn {
     width: 100%;
@@ -576,7 +616,7 @@ export default {
     margin-left: -10.1rem !important;
   }
 }
- .loading{
-      top: 4.5rem !important;
-    }
+.loading {
+  top: 4.5rem !important;
+}
 </style>

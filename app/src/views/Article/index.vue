@@ -4,7 +4,7 @@
    <Header v-if='isheader' :isshare='true'  :title='articledata.title' :imageUrl='articledata.image' :descriContent='articledata.description' :shareUrl="sharUrl+articleId+'?sharid=1'">{{titile}}</Header>
   <!-- banner图 -->
   <div class="banner">
-    <img :src="articledata.image"/>
+   <TemplateImg :msg="articledata.image"></TemplateImg>
   </div>
   <!-- 软文名称 -->
   <div class="name">
@@ -14,14 +14,14 @@
   <!-- 作者 -->
   <div class="author">
     <div class="header">
-      <img :src="articledata.authorHeadimg"/>
+         <TemplateImg :msg="articledata.authorHeadimg"></TemplateImg>
     </div>
     <div class="name">
       {{articledata.authorName}}
     </div>
   </div>
   <div class="content" >
-<div v-html="articledata.content">
+   <div v-html="articledata.content">
 
 </div>
   </div>
@@ -36,6 +36,7 @@
 import Header from "../../components/Header/";
 import { getArticleData } from "../../services/api.js";
 import { getarticleUrl } from "../../utils/request.js";
+import TemplateImg from '../../components/Img/';
 
 export default {
   data() {
@@ -48,7 +49,8 @@ export default {
     };
   },
   components: {
-    Header
+    Header,
+    TemplateImg
   },
   methods: {
     // 获取软文数据
@@ -64,15 +66,16 @@ export default {
     },
     handleShareHide() {
       var host = window.location.href;
-      console.log(host);
       let ishost = host.indexOf("sharid");
-      if (ishost != -1) {
+      if (ishost != -1||typeof EG_Recipes == "undefined") {
         this.isheader = false;
       }
     }
   },
   mounted() {
+    setTimeout(()=>{
     this.handleShareHide();
+    },300)
     this.sharUrl = getarticleUrl();
     this.articleId = this.$route.params.id;
     this.articleData();
@@ -99,11 +102,13 @@ img {
       "Microsoft YaHei", Arial, sans-serif;
     font-size: medium;
     letter-spacing: 2px;
+
     color: #999999;
   }
   .content > img {
     width: 100%;
   }
+
   .name {
     padding: 1rem;
     font-size: 1.6rem;
@@ -154,12 +159,12 @@ img {
   }
 
   .readdata {
-    font-size: 1.4rem;
+    font-size: 1.4rem !important;
     padding: 1rem;
     color: #898989;
     span {
       float: right;
-      font-size: 1.4rem;
+      font-size: 1.4rem !important;
     }
   }
 }

@@ -1,14 +1,14 @@
 <template>
- <div class="header">
-    <div class="main" >
-    <span class="icon iconfont icon-fanhui" @click='handleBack'></span>
-    <slot ></slot>
-    <i class="icon iconfont icon-sousuo" @click='handleShow' v-if='isHideSearch'></i>
-        <i class="icon iconfont icon-fenxiang" @click='handleSshare' v-if='isshare'></i>
- </div>
-   <!-- 弹出搜索页面-->
-   <Search  ref='isSearch' class="searchbox"></Search>
-</div>
+  <div class="header">
+    <div class="main">
+      <span class="icon iconfont icon-fanhui" @click="handleBack"></span>
+      <slot></slot>
+      <i class="icon iconfont icon-sousuo" @click="handleShow" v-if="isHideSearch"></i>
+      <i class="icon iconfont icon-fenxiang" @click="handleSshare" v-if="isshare"></i>
+    </div>
+    <!-- 弹出搜索页面-->
+    <Search ref="isSearch" class="searchbox"></Search>
+  </div>
 </template>
 <script>
 import Search from "../../components/Search/";
@@ -31,22 +31,37 @@ export default {
   mounted() {},
   methods: {
     handleBack() {
+      // let rootTypeNumber = window.location.href;
+      // let backnumber = rootTypeNumber.split("rootType=")[1];
       if (typeof EG_Recipes != "undefined") {
         var rootType = localStorage.getItem("rootType");
-        console.log(rootType);
-        if (rootType == 1 || rootType == null) {
-          this.$router.back(-1);
-        } else {
-          EG_Recipes.callBack(
-            JSON.stringify({
-              callBackNative: 1
-              // urlAddr: "http://192.168.1.52/nmenu/#/"
-            })
-          );
-        }
+        // alert(rootType);
+      //   if (rootType == 1 || rootType == null) {
+      //     this.$router.back(-1);
+      //   } else {
+      //       EG_Recipes.callBack(
+      //         JSON.stringify({
+      //           callBackNative: 1
+      //           // urlAddr: "http://192.168.1.52/nmenu/#/"
+      //         })
+            
+      //       )
+
+      
+        // }
+        // alert(window.history.length);
+        // alert(rootType);
+          window.history.length >=2&&rootType=='1'
+            ? this.$router.go(-1)
+            : EG_Recipes.callBack(
+               JSON.stringify({
+                 callBackNative: 1
+                 // urlAddr: "http://192.168.1.52/nmenu/#/"
+                 })          
+                )
       } else {
         this.$router.back(-1);
-      } 
+      }
     },
     handleShow() {
       this.$refs.isSearch.show = true;
@@ -56,7 +71,6 @@ export default {
       var shardata = JSON.stringify({
         title: this.title,
         descriContent: this.descriContent,
-
         shareUrl: this.shareUrl,
         imageUrl: this.imageUrl
       });

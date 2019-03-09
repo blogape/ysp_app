@@ -1,30 +1,38 @@
 <template>
-<!-- 食谱分类 -->
-<div class="category">
-<!-- 头部导入 -->
-<Header :isHideSearch='true'>食谱分类</Header>
-<!-- 内容 -->
-<div class="main" v-for='(item,key) in  catrgorydata' :key='key'>
-<!-- 标题 -->
-<div class="title">
-{{item.recipeCategory.categoryName}}
-</div>
-<div class="content">
-<ul>
-    <li v-for="(item,key) in item.recipeCategorys" :key='key'><router-link :to="({name:'Search',params:{id:item.categoryName,pid:1}})" >
-        <img :src="item.img">
-        <span>{{item.categoryName}}</span>
-        </router-link>
-        </li>
-</ul>
-</div>
-</div>
-</div>
+  <!-- 食谱分类 -->
+  <div class="category">
+    <!-- 头部导入 -->
+    <Header :isHideSearch="true">食谱分类</Header>
+    <!-- 内容 -->
+    <div
+      class="main"
+      v-for="(item,key) in  catrgorydata"
+      :key="key"
+      v-show="item.recipeCategorys!=null"
+    >
+      <!-- 标题 -->
+      <div class="title">{{item.recipeCategory.categoryName}}</div>
+      <div class="content">
+        <ul>
+          <li v-for="(item,key) in item.recipeCategorys" :key="key">
+            <router-link :to="({name:'Search',params:{id:item.categoryName,pid:1}})">
+              <div class="img">
+                <TemplateImg :msg='item.img'></TemplateImg>
+              </div>
+              <span>{{item.categoryName}}</span>
+            </router-link>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
 </template>
 
 <script>
 import Header from "../../components/Header/";
 import { getCatrgoryData } from "../../services/api.js";
+import TemplateImg from '../../components/Img/';
+
 export default {
   data() {
     return {
@@ -42,7 +50,8 @@ export default {
     this.getData();
   },
   components: {
-    Header
+    Header,
+    TemplateImg
   }
 };
 </script>
@@ -83,8 +92,16 @@ export default {
           line-height: 2rem;
           display: inline-block;
         }
-        img {
-          width: 100%;
+        .img {
+          vertical-align: middle;
+          line-height: 8rem;
+          height: 8rem;
+          display: flex;
+          align-items: center;
+          img {
+            align-items: center;
+            width: 100%;
+          }
         }
       }
     }

@@ -227,3 +227,19 @@ li {
 
   font-size: 3.8rem !important;
 }
+
+
+
+.van-checkbox__icon--checked .van-icon{
+    color: #fff !important;
+    border-color: #1989fa !important;
+    background-color: #1989fa !important;
+}
+
+.van-picker__cancel, .van-picker__confirm{
+  font-size: 1.4rem;
+}
+
+.van-dialog__confirm, .van-dialog__confirm:active{
+  color: #1989fa!important;
+}

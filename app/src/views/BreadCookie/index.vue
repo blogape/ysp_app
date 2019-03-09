@@ -1,20 +1,20 @@
 <template>
-    <div class="steakCokkie">
-        <Header :isshare='false'>面包机</Header>
-        <!-- 头部 -->
-        <div class="ysp-header">
-            <!-- <div class='left' @click='handleLock' >
+  <div class="steakCokkie">
+    <Header :isshare="false">智能面包机</Header>
+    <!-- 头部 -->
+    <div class="ysp-header">
+      <!-- <div class='left' @click='handleLock' >
                     <img src="../../assets/images/icon_lock_dis.png" id='lockimg'/>
                     <span :class="{lockcolor:iscolor}">童锁</span>
             </div>
              <div class='right'>
                     <img src="../../assets/images/icon_scan_dis.png"/>
                      <span>扫一扫</span>
-            </div> -->
-        </div>
-        <!-- 环形倒计时 -->
-        <div class="content">
-        <van-circle
+      </div>-->
+    </div>
+    <!-- 环形倒计时 -->
+    <div class="content">
+      <van-circle
         v-model="currentRate"
         :color="rotecolor"
         fill="#fff"
@@ -25,31 +25,51 @@
         :speed="100"
         :clockwise="false"
         :stroke-width="18"
-/>
-    <!-- 时间 -->
-    <span class='test-time'>剩余时间</span>
-    <!-- 名称 -->
-    <span class="name">{{title}}</span>
-    <!-- 状态 -->
-    <span class="tatus">{{statusText}}</span>
+      />
+      <!-- 时间 -->
+      <span class="test-time">剩余时间</span>
+      <!-- 名称 -->
+      <span class="name">{{title}}</span>
+      <!-- 状态 -->
+      <span class="tatus">{{statusText}}</span>
       <!-- 动画圈圈 -->
-              <ul id="countdown" v-if='isanimate'>
-                <li>
-                <i><b class="dotdot"></b></i>
-                <span class="seconds"></span>
-            </li>
-              </ul>
-            </div>
-        <!-- 按钮组 -->
-        <div class="cookie-btn">
-        <van-button round type="danger" :class="{ active: isActive,round:isround}" @click='handleSteakStopCookie' :disabled='topdisblead'>停止</van-button>
-        <van-button round type="danger" :class="{ active: isActive,round:isround}" @click='handleAginStartCookie' v-if='isaginbtn'>继续</van-button>
-        <van-button round type="danger" :class="{ active: isActive,round:isround}" @click='suspended' :disabled='topdisblead'  v-if='stopsupper'>暂停</van-button>
-        </div>
-        <Recipetemplate v-for='(item,key) in  steakdata.list' :key='key' :data='item'></Recipetemplate>
-    <Loading v-if='isloadinghide'></Loading>
-
+      <ul id="countdown" v-if="isanimate">
+        <li>
+          <i>
+            <b class="dotdot"></b>
+          </i>
+          <span class="seconds"></span>
+        </li>
+      </ul>
     </div>
+    <!-- 按钮组 -->
+    <div class="cookie-btn">
+      <van-button
+        round
+        type="danger"
+        :class="{ active: isActive,round:isround}"
+        @click="handleSteakStopCookie"
+        :disabled="topdisblead"
+      >停止</van-button>
+      <van-button
+        round
+        type="danger"
+        :class="{ active: isActive,round:isround}"
+        @click="handleAginStartCookie"
+        v-if="isaginbtn"
+      >继续</van-button>
+      <van-button
+        round
+        type="danger"
+        :class="{ active: isActive,round:isround}"
+        @click="suspended"
+        :disabled="topdisblead"
+        v-if="stopsupper"
+      >暂停</van-button>
+    </div>
+    <Recipetemplate v-for="(item,key) in  steakdata.list" :key="key" :data="item"></Recipetemplate>
+    <Loading v-if="isloadinghide"></Loading>
+  </div>
 </template>
 <script>
 import Header from "../../components/Header/index.vue";
@@ -67,6 +87,7 @@ import {
   steakStopCookie,
   startCookie,
   cookieSearch,
+  searchEquipments,
   methodclock,
   breadStopCookie,
   brandsupperstop
@@ -80,10 +101,11 @@ export default {
       timer: "--:--",
       isloadinghide: true,
       rate: 0,
-      rotecolor:'#ddd',
+      rotecolor: "#ddd",
       stopsupper: true,
       iscolor: false,
       isclassstop: false,
+      timet: "",
       topdisblead: false,
       isanimate: false,
       isActive: false,
@@ -101,12 +123,15 @@ export default {
     Recipetemplate,
     Loading
   },
+  destroyed() {
+    clearTimeout(this.timet);
+  },
   methods: {
-      getUserToken(){
+    getUserToken() {
       // 获取用户token
-    handleUserData();
-    let userData = JSON.parse(localStorage.getItem("userData"));
-    this.token = userData.token;
+      handleUserData();
+      let userData = JSON.parse(localStorage.getItem("userData"));
+      this.token = userData.token;
     },
     // 连接websock
     linkWebsock() {
@@ -117,15 +142,14 @@ export default {
       let socket = new SockJS(SocketUrl); //1牛排机连接SockJS的endpoint是“endpointWisely”，与后台代码中注册的endpoint要一样。
       stompClient = Stomp.over(socket); //2创建STOMP协议的webSocket客户端。
       stompClient.connect(
-        { macId: macId },
+        { macId:macId  },
         frame => {
           //3连接webSocket的服务端。
           console.log("开始进行连接Connected: " + frame);
           //4通过stompClient.subscribe1（）订阅服务器的目标是'/user/' + userId + '/msg'接收一对一的推送消息,其中userId由服务端传递过来,用于表示唯一的用户,通过此值将消息精确推送给一个用户
           stompClient.subscribe("/user/" + macId + "/msg", response => {
             var obj = JSON.parse(response.body);
-                        this.isloadinghide=false;
-
+            this.isloadinghide = false;
             this.statusText = obj.iotPlatformMessages.runstateText;
             if (
               obj.iotPlatformMessages.runstateText == "待机" &&
@@ -215,9 +239,9 @@ export default {
     //   计算时间
     time(second) {
       let time = second * 1000;
-       if(this.rate>0){
-                  this.rotecolor='#3CADFF'
-                }
+      if (this.rate > 0) {
+        this.rotecolor = "#3CADFF";
+      }
       if (time <= 0) {
         return "--:--";
       } else {
@@ -230,7 +254,7 @@ export default {
     },
     // 开始煎烤
     async handleAginStartCookie() {
-                this.getUserToken();
+      this.getUserToken();
       let jk = "11";
       let cookiedata = await steackAgainCookie(
         this.iotMacModelId,
@@ -263,7 +287,8 @@ export default {
     },
     // 暂停
     async suspended() {
-                this.getUserToken();
+      this.getUserToken();
+
       let cookiedata = await brandsupperstop(
         this.iotMacModelId,
         this.macId,
@@ -333,18 +358,105 @@ export default {
   },
   computed: {},
   created() {
-    this.title =
+    
+this.title =
       this.$route.query.title < 5
         ? this.$route.query.title
         : this.$route.query.title.substring(0, 6) + "...";
-
     this.macId = this.$route.query.macId;
     this.iotMacModelId = this.$route.query.iotMacModelId;
     this.recipeid = this.$route.query.recipeid;
+
     // 获取用户token
     handleUserData();
+    //  setTimeout(() => {
+    //     let getItem = localStorage.getItem("cookiereload");
+    //     if (getItem == null) {
+    //       localStorage.setItem("cookiereload", "1");
+    //       location.reload()
+    //     }
+    //   }, 300);
+
+    //   setTimeout(() => {
+    //     localStorage.removeItem("cookiereload", "1");
+    //   }, 1000);
+    let locastrongTime = localStorage.getItem("setTime");
+    let totaltime = localStorage.getItem("totaltime");
+    // if(totaltime==)
+    // alert(locastrongTime);
+    if(locastrongTime!=null){
+    let parsedata = JSON.parse(locastrongTime); 
+   let sum; //计算
+    let summinuter;
+
+    let day = parsedata.timevaluse[0]; // 今天与明天
+
+    let minutersum = parsedata.cookieminuter;
+
+    let housevalue =
+      parseInt(parsedata.timevaluse[1]) - parseInt(parsedata.cookiehourse);
+    let minutervalue =
+      parseInt(parsedata.timevaluse[2]) - parseInt(parsedata.cookieminuter);
+    if (housevalue < 0) {
+      let housevalueabs = Math.abs(housevalue);
+      day = "明天";
+
+      if (minutervalue < 0) {
+        let minutervaluesabs = Math.abs(minutervalue);
+        summinuter = 60 - minutervaluesabs;
+        sum = 24 - parseInt(housevalueabs) - 1;
+      } else {
+        summinuter = minutervalue;
+        sum = 24 - parseInt(housevalueabs);
+      }
+    } else {
+      if (minutervalue < 0) {
+      let housevalueabss = Math.abs(housevalue);
+        let minutervaluesabss = Math.abs(minutervalue);
+        summinuter = 60 - minutervaluesabss;
+        sum = housevalueabss - 1;
+      } else {
+        summinuter = minutervalue;
+        sum = 24 - parseInt(housevalueabss);
+      }
+    }
+
+    if (totaltime != "undefined") {
+      Dialog.alert({
+        title: "温馨提示",
+        confirmButtonText: "朕知道了",
+        message:
+          "你已设定" +
+          parsedata.timevaluse[0] +
+          parsedata.timevaluse[1] +
+          parsedata.timevaluse[2] +
+          "要吃面包，面包制作时间约" +
+          parsedata.cookiehourse +
+          "小时"+parsedata.cookieminuter+"分设备将于" +
+          day +
+          sum +
+          "时" +
+          summinuter +
+          "开始启动制作"
+      }).then(() => {
+        localStorage.removeItem(totaltime);
+        // on close
+      });
+    }
+    }
+
+
+
+
     let userData = JSON.parse(localStorage.getItem("userData"));
     this.token = userData.token;
+
+    this.timet = setInterval(async () => {
+      let data = await searchEquipments(this.macId, this.token);
+      if (data.data.status == "待机") {
+        this.$router.push("/complete");
+      }
+    }, 3000);
   }
 };
 </script>
@@ -567,7 +679,11 @@ export default {
     margin-left: -10.1rem !important;
   }
 }
- .loading{
-      top: 4.5rem !important;
-    }
+.loading {
+  top: 4.5rem !important;
+}
+.van-dialog__confirm,
+.van-dialog__confirm:active {
+  color: #1989fa !important;
+}
 </style>

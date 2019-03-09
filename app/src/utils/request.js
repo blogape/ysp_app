@@ -4,10 +4,6 @@ import store from "../store.js";
 import '../../public/js/getappdata.js';
 var host = window.location.host;
 
-// axios.defaults.baseURL = "https://recipe.eg-live.com";
-// setTimeout(()=>{
-//   console.log();
-// },3000)
 let urlApi=Datas();
 let getConfigUrl;
 let scoketUrl;
@@ -21,7 +17,7 @@ urlApi.then(function(data){
   // console.log(getConfigUrl.config.active)
 
 }).then(()=>{
-  console.log(getConfigUrl);
+
       let isApiUrl = getConfigUrl.config.active;
       let ApiUrl = getConfigUrl.config;
       if (isApiUrl == "test") {
@@ -37,6 +33,7 @@ urlApi.then(function(data){
         scoketUrl = ApiUrl.dev.scoketUrl;
         sharUrl = ApiUrl.dev.sharUrl;
       }
+
     axios.defaults.baseURL = baseUrl;
     // response interceptor
     axios.interceptors.response.use(
@@ -46,11 +43,7 @@ urlApi.then(function(data){
         // store.commit('showLoading');
         store.commit("hideLoading");
         return response.data;
-        // if (res.code !== 0) {
-        //   // message.error(res.msg);
-        //   // return Promise.reject(res.);
-        // } else {
-        // }
+     
       },
       error => {
         if (error.response && error.response.status === 401) {

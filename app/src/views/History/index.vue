@@ -1,24 +1,23 @@
 <template>
-<!-- 烹饪记录 -->
-    <div class="cookiehistory">
+  <!-- 烹饪记录 -->
+  <div class="cookiehistory">
     <Header>收藏记录</Header>
     <div class="content">
-        <div class="list" v-for='(item,key) in recipedata.list' :key='key' >
-        <Recipetemplate :data='item'></Recipetemplate>
+      <div class="list" v-for="(item,key) in recipedata.list" :key="key">
+        <Recipetemplate :data="item"></Recipetemplate>
         <!-- 删除 -->
         <div class="delete">
-            <span @click='handleDelete(item.id)'>删除</span>
+          <span @click="handleDelete(item.id)">删除</span>
         </div>
+      </div>
     </div>
-    </div>
-      <NotFind v-if='isnot'>收藏夹空空一片 o(╥﹏╥)o </NotFind>
-
-    </div>
+    <NotFind v-if="isnot">收藏夹空空一片 o(╥﹏╥)o</NotFind>
+  </div>
 </template>
 
 <script>
 import Header from "../../components/Header/";
-import Recipetemplate from "../../components/Recipetemplate/";
+import Recipetemplate from "../../components/Cookie/";
 import { getCollectionHistory, deleteCollection } from "../../services/api.js";
 import { Dialog, Toast } from "vant";
 import NotFind from "../../components/NotFind/";

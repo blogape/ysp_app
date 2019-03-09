@@ -1,142 +1,169 @@
-<template>  
- <!-- 食谱详情 -->
-    <div class="product">
-        <Header v-if='isheader' :isshare='true' :isHideSearch='isSearch' :title='recipedata.title' :imageUrl='recipedata.coverimg' :descriContent='recipedata.description' :shareUrl="sharUrl+recipeId+'?sharid=1'">{{this.title}}</Header>
-        <!-- banner图 -->
-        <div class="banner">
-            <img :src="recipedata.coverimg"/>
-        </div>
-            <!-- 作者 -->
-            <div class="author">
-                <!-- 头像 -->
-                <div class="head-portrait">
-                    <img :src="userdata.headimg">
-                </div>
-                <!-- nikename -->
-                <span class="name">{{userdata.nickname}}</span>
-                <!-- 收藏 -->
-                <div :class="{collection:isActive,'collec':hasError}" @click='handleCollection' collection v-if='iscoolebtn'>
-                        <font>{{collecttext}} </font>
-                </div>
-            </div>
-            <!-- 描述 -->
-            <div class="describle">
-                <!-- 标题 -->
-                <div class="title">
-                    {{recipedata.title}}
-                </div>
-                <!-- 难度 -->
-                <div class="difficulty">
-                    难度：{{difficultyView}}<font>制作时间：约{{diifftimeCost}}</font>  
-                </div>
-                <!-- 描述 -->
-                <div class="content">
-                  {{recipedata.description}}
-                </div>
-            </div>
-            <!-- 材料 -->
-            <div class="material">
-                <!-- 主料 -->
-                <div class="main" v-show="ingredients.length>1">
-                    <div class="title">
-                    主料
-                    </div>
-                <div class="content">
-                    <ul>
-                        <li v-for='(items,key) in ingredients' :key='key'>{{items.ingredientName}} <font>{{items.numberUnit}}</font></li>
-                    </ul>
-                </div>
-                </div>
-                <!-- 配料 -->
-                <div class="ingredients" v-show='material.length>1'>
-                     <div class="title">
-                    配料
-                    </div>
-                <div class="content">
-                    <ul>
-                        <li v-for='(items,key) in material' :key='key'>{{items.ingredientName}} <font>{{items.numberUnit}}</font></li>
-                    </ul>
-                </div>
-                </div>
-            </div>
-            <!-- 烹饪步骤 -->
-            <div class="cookiestep">
-                <div class="content" v-for='(items,key) in recipedata.cookingSteps' :key='key'>
-                    <div class="title">
-                    {{items.title}}          
-                     </div>
-                    <ul>
-                        <li v-for='(item,key) in items.cookingStepByTitle' :key='key'>
-                            <div class="name">
-                                步骤{{item.stepno}}
-                            </div>
-                            <div class="img">
-                                <img :src="item.images"/>
-                            </div>
-                            <p>                            {{item.description}}
-</p>
-                        </li>
-                    </ul>
-                </div>
-            </div>
-            <!-- 小贴士 -->
-            <div class="tips">
-                <div class="title">
-                小贴士
-                </div>
-                {{recipedata.tips}}
-            </div>
-            <!-- 支持设备 -->
-            <div class="equipment">
-                    <div class="title">
-                        支持设备
-                    </div>
-                    <ul>
-                        <li v-for='(item,key) in recipedata.recipeMacModelMids' :key='key'>{{item.macName}} {{item.macModel}}</li>                       
-                    </ul>
-            </div>
-            <!-- 日期与浏览次数 -->
-            <div class="datareading">
-                  阅读 {{recipedata.readCount}}      <font>{{recipedata.createTime}}</font>
-            </div>
-        <!-- 一键烹饪按钮 -->
-        <div class="cookie_btn" @click='handleCookieBtn' v-if='iscookiebtn'>
-                一键烹饪
-        </div>
-        <!-- 弹出层设备 -->
-<van-popup v-model="show">
-  <div class="equipment-popup">
-      <div class="header">
-        请选择烹饪设备
+<template>
+  <!-- 食谱详情 -->
+  <div class="product">
+    <Header
+      v-if="isheader"
+      :isshare="true"
+      :isHideSearch="isSearch"
+      :title="recipedata.title"
+      :imageUrl="recipedata.coverimg"
+      :descriContent="recipedata.description"
+      :shareUrl="sharUrl+recipeId+'?sharid=1'"
+    >{{this.title}}</Header>
+    <!-- banner图 -->
+    <div class="banner">
+      <img :src="recipedata.coverimg" />
+    </div>
+    <!-- 作者 -->
+    <div class="author">
+      <!-- 头像 -->
+      <div class="head-portrait">
+        <img :src="userdata.headimg" />
       </div>
-      <div class="content">
+      <!-- nikename -->
+      <span class="name">{{userdata.nickname}}</span>
+      <!-- 收藏 -->
+      <div
+        :class="{collection:isActive,'collec':hasError}"
+        @click="handleCollection"
+        collection
+        v-if="iscoolebtn"
+      >
+        <font>{{collecttext}}</font>
+      </div>
+    </div>
+    <!-- 描述 -->
+    <div class="describle">
+      <!-- 标题 -->
+      <div class="title">{{recipedata.title}}</div>
+      <!-- 难度 -->
+      <div class="difficulty">
+        难度：{{difficultyView}}
+        <font>制作时间：约{{diifftimeCost}}</font>
+      </div>
+      <!-- 描述 -->
+      <div class="content">{{recipedata.description}}</div>
+    </div>
+    <!-- 材料 -->
+    <div class="material">
+      <!-- 主料 -->
+      <div class="main" v-show="ingredients.length>0">
+        <div class="title">主料</div>
+        <div class="content">
+          <ul>
+            <li v-for="(items,key) in ingredients" :key="key">
+              <span>{{items.ingredientName}}</span>
+              <font>{{items.numberUnit}}</font>
+            </li>
+          </ul>
+        </div>
+      </div>
+      <!-- 配料 -->
+      <div class="ingredients" v-show="material.length>0">
+        <div class="title">配料</div>
+        <div class="content">
+          <ul>
+            <li v-for="(items,key) in material" :key="key">
+              <span>{{items.ingredientName}}</span>
+              <font>{{items.numberUnit}}</font>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <!-- 烹饪步骤 -->
+    <div class="cookiestep">
+      <div class="content" v-for="(items,key) in recipedata.cookingSteps" :key="key">
+        <div class="title">{{items.title}}</div>
         <ul>
-          <li v-for='(item,key) in equipmentdata' :key='key'>
-            <a  @click='handleCookieClick(item.did,item.uuid,item.status,item.recipeId,item.type,recipedata.title)'>
-              <img :src="item.image"/>
-              <div class="container">
-                   <!-- 名称 -->
-                  <span>{{item.name}} </span>
-                   <!-- 状态 -->
-                  <span class='status'>{{item.status}}</span>
-              </div>
-          </a>
+          <li v-for="(item,key) in items.cookingStepByTitle" :key="key">
+            <div class="name">步骤{{item.stepno}}</div>
+            <div class="img">
+              <img :src="item.images">
+            </div>
+            <p>{{item.description}}</p>
           </li>
         </ul>
       </div>
-      <!-- 取消 -->
-      <div class="footer" @click='handleCancel'>
-          取消
-      </div>
-  </div>
-</van-popup>
-
-
     </div>
+    <!-- 小贴士 -->
+    <div class="tips">
+      <div class="title">小贴士</div>
+      {{recipedata.tips}}
+    </div>
+    <!-- 支持设备 -->
+    <div class="equipment" v-if="isequipment.length!==0">
+      <div class="title">支持设备</div>
+      <ul>
+        <li
+          v-for="(item,key) in recipedata.recipeMacModelMids"
+          :key="key"
+        >{{item.macName}} {{item.macModel}}</li>
+      </ul>
+    </div>
+    <!-- 日期与浏览次数 -->
+    <div class="datareading">
+      阅读 {{recipedata.readCount}}
+      <font>{{recipedata.createTime}}</font>
+    </div>
+    <!-- 一键烹饪按钮 -->
+    <div class="cookie_btn" @click="handleCookieBtn" v-if="iscookiebtn&&isequipment.length!==0">我要烹饪</div>
+    <!-- 弹出层设备 -->
+    <van-popup v-model="show" position="bottom">
+      <div class="equipment-popup">
+        <div class="header">请选择烹饪设备</div>
+        <div class="content">
+          <ul>
+            <li
+              v-for="(item,key) in equipmentdata"
+              :key="key"
+              v-if="(item.status!='离线')&&(item.status!='保温中')&&(item.status!='工作中'&&item.type=='智能面包机'||item.type=='智能牛排机')"
+              @click="handleIsChoose"
+            >
+              <van-checkbox-group
+                v-model="changetrue"
+                class="checlass"
+                :max="1"
+                @change="toggle(item.did,item.uuid,item.status,item.recipeId,item.type,recipedata.title)"
+              >
+                <van-checkbox v-model="item.did" :key="item.did" :name="item.did" class="choose">
+                  <!-- @click="handleCookieClick(item.did,item.uuid,item.status,item.recipeId,item.type,recipedata.title)" -->
+                  <a>
+                    <img :src="item.image">
+                    <div class="container">
+                      <!-- 名称 -->
+                      <span>{{item.name.length>10?item.name.substring(0,10)+'...':item.name}}</span>
+                    </div>
+                    <!-- 状态 -->
+                    <div class="status" style="float:right">{{item.status}}</div>
+                  </a>
+                </van-checkbox>
+              </van-checkbox-group>
+            </li>
+          </ul>
+        </div>
+      </div>
+      <!-- 取消 -->
+      <!-- @click="handleCancel" -->
+      <div class="footer">
+        <span @click="nowCookie">立即烹饪</span>
+        <span @click="handleChooseTime" v-if="istimeHide">选择时间</span>
+      </div>
+    </van-popup>
+    <temptimer
+      v-if="istime"
+      v-on:handleCall="handleHidetime"
+      v-on:handlePropsTime="handlepropstime"
+      :childDate="getcurrentdate"
+      class="p-time"
+    ></temptimer>
+    <i class="bg-pop" v-if="ispopu"></i>
+  </div>
 </template>
 
 <script>
 import Header from "../../components/Header/";
+import temptimer from "../../components/Time/";
 import {
   product,
   recipeCollect,
@@ -144,18 +171,22 @@ import {
   searchEquipment
 } from "../../services/api.js";
 import { handleUserData } from "../../utils/appapi.js";
-import { Toast, Popup } from "vant";
+import { Toast, Popup, DatetimePicker, checked } from "vant";
 import { startCookie } from "../../services/api.js";
 import { getShareUrl } from "../../utils/request.js";
-
+import TemplateImg from "../../components/Img/";
 export default {
   data() {
     return {
       title: "",
       recipedata: "",
+      changetrue: [],
       isheader: true,
+      getcurrentdate: "",
       isSearch: false,
       iscookiebtn: true,
+      ispopu: false,
+      istime: false,
       show: false,
       isActive: true,
       collecttext: "收藏",
@@ -168,44 +199,183 @@ export default {
       text: "1",
       material: "",
       difficulty: "",
+      coverimg: "",
       timeCost: "",
       recipeId: "",
       iscollect: "",
+      isequipment: "",
+      istimeHide: true,
       equipmentdata: "",
-      code: ""
+      code: "",
+      changedata: "",
+      statusObj: []
     };
   },
   components: {
-    Header
+    TemplateImg,
+    Header,
+    temptimer
   },
   created() {
+    // let redata = await this.startfCookie();
+    // console.log(redata);
+    // this.nowCookie();
+    this.show = false;
     this.getRecipeData();
+    let date = new Date();
+    let h = date.getHours();
+    let m = date.getMinutes();
+    console.log(h + ":" + m);
   },
   methods: {
+    // 判断是否选择设备
+    handleIsChoose() {
+      // alert(this.changedata.did);
+      // if(this.changedata.did!=undefined){
+      //   Toast('只支持一台设备烹饪')
+      // }
+    },
+
+    nowCookie() {
+      if (this.changetrue == "") {
+        Toast("请选择一台设备");
+      } else {
+        if (this.changedata.recipeid == undefined) {
+          this.changedata.recipeid = null;
+        }
+        // alert(this.changedata.did);
+        this.handleCookieClick(
+          this.changedata.did,
+          this.changedata.uuid,
+          this.changedata.status,
+          this.changedata.recipeId,
+          this.changedata.type,
+          this.changedata.title
+        );
+
+        //   let gio = await this.startfCookie(
+        //   this.changedata.did,
+        //   this.changedata.uuid,
+        //   this.changedata.recipeId
+        // );
+
+        // if(gio.code==0||gio.code==9500){
+
+        //      this.$router.push({
+        //           name: "BreadCookie",
+        //           query: {
+        //             macId:  this.changedata.did,
+        //             iotMacModelId: this.changedata.uuid,
+        //             recipeid: this.recipeId,
+        //             title: this.changedata.title
+        //           }
+        //         });
+        // }
+      }
+    },
+    handlepropstime(time) {
+      if (this.changetrue == "") {
+        Toast("请选择一台设备");
+      } else {
+        if (this.changedata.recipeid == undefined) {
+          this.changedata.recipeid = null;
+        }
+        if (time > 779) {
+          Toast("设置的时间不能大于13个小时");
+        } else {
+          
+          this.handleCookieClick(
+            this.changedata.did,
+            this.changedata.uuid,
+            this.changedata.status,
+            this.changedata.recipeId,
+            this.changedata.type,
+            this.changedata.title,
+            time
+          );
+        }
+      }
+    },
+    toggle(did, uuid, status, recipeId, type, title) {
+      // alert( this.changetrue[this.changetrue.length-1])
+      //      let changeval=[this.changetrue[this.changetrue.length-1]];
+      //      this.changetrue=[];
+      //  this.changetrue.push(changeval);
+      //  alert(this.changetrue);
+      //  if(this.statusObj.length>0){
+
+      // }
+      // this.statusObj.push(status);
+      // alert(did)
+      // alert(this.changetrue+did)
+      //如果 循环出来的id 与选中的id匹配
+      if (did == this.changetrue) {
+        this.changedata = {
+          did: did,
+          uuid: uuid,
+          status: status,
+          recipeId: recipeId,
+          type: type,
+          title: title
+        };
+        // alert(this.statusObj[0]);
+      }
+      // alert(this.changedata.status);
+      //  if(did)
+    },
+    // 选择时
+    handleChooseTime() {
+      if (this.changedata == "") {
+        Toast("请选择一台设备");
+      } else if (this.changedata.type != "智能面包机") {
+        Toast("该设备不能选择时间");
+      } else {
+        this.istime = true;
+        this.ispopu = true;
+        this.getRecipeData();
+        let date = new Date();
+        let h = date.getHours();
+        let m = date.getMinutes();
+        this.getcurrentdate = { hours: h, minuter: m,recipeid:this.recipeId };
+      }
+    },
     // 查询是否是分享出去的食谱
     handleShareHide() {
       var host = window.location.href;
       let ishost = host.indexOf("sharid");
-      if (ishost != -1) {
+      // ||typeof EG_Recipes != "undefined"
+      if (ishost != -1 || typeof EG_Recipes == "undefined") {
         this.iscoolebtn = false;
         this.iscookiebtn = false;
         this.isheader = false;
       }
     },
     // 开始烹饪
-    async startCookie(macId, iotMacModelId, recipeId) {
-      return (this.code = await startCookie(
+    async startfCookie(macId, iotMacModelId, recipeId) {
+      let c = await startCookie(
+        iotMacModelId,
+        macId[0],
+        this.recipeId,
+        this.token,
+        this.text
+      );
+      return c;
+    },
+    // 开始烹饪
+    async startCookie(macId, iotMacModelId, recipeId, totime) {
+      this.code = await startCookie(
         iotMacModelId,
         macId,
         recipeId,
         this.token,
-        this.text
-      ));
+        totime
+      );
     },
     // 食谱详情数据
     async getRecipeData() {
       let token;
       // 调用获取用户数据
+
       let userData = JSON.parse(localStorage.getItem("userData"));
       if (userData == null) {
         token == null;
@@ -215,6 +385,8 @@ export default {
       let recipedata = await product(this.$route.params.id, token);
       // 食谱数据绑定
       this.recipedata = recipedata.data;
+      this.isequipment = recipedata.data.recipeMacModelMids;
+      this.coverimg = recipedata.data.coverimg;
       this.timeCost = this.recipedata.timeCost;
       this.recipeId = recipedata.data.id;
       this.iscollect = this.recipedata.iscollect;
@@ -288,6 +460,7 @@ export default {
     },
     //点击一键烹饪 弹出
     async handleCookieBtn() {
+      this.changetrue = [];
       handleUserData();
       setTimeout(async () => {
         let userData = JSON.parse(localStorage.getItem("userData"));
@@ -295,6 +468,11 @@ export default {
           this.token = userData.token;
           let resdata = await searchEquipment(this.recipeId, userData.token);
           this.equipmentdata = resdata.data;
+          if (this.equipmentdata[0]) {
+            if (this.equipmentdata[0].type == "智能牛排机") {
+              this.istimeHide = false;
+            }
+          }
           if (this.equipmentdata.length > 0) {
             this.show = true;
           } else {
@@ -304,6 +482,10 @@ export default {
         }
       }, 300);
     },
+    handleHidetime(msg) {
+      this.ispopu = false;
+      this.istime = false;
+    },
     // 烹饪跳转并且获取状态跟是否跳转
     async handleCookieClick(
       macId,
@@ -311,15 +493,26 @@ export default {
       status,
       recipeid,
       type,
-      title
+      title,
+      totaltime
     ) {
-      this.handleCookieBtn();
+      localStorage.setItem('totaltime',totaltime);
+      // alert( macId+
+      // iotMacModelId+
+      // status+
+      // recipeid+
+      // type+
+      // title)
+      // alert(recipeid);
+      // alert(status)
+      let that = this;
+      // this.handleCookieBtn();
       if (status == "离线") {
         Toast("离线设备无法使用~");
       } else if (this.recipeId == recipeid) {
         if (status == "待机") {
           if (type == "智能牛排机") {
-            this.startCookie(macId, iotMacModelId, this.recipeId);
+            this.startCookie(macId, iotMacModelId, this.recipeId, totaltime);
             setTimeout(() => {
               if (this.code.code == 0 || this.code.code == 9500) {
                 this.$router.push({
@@ -334,9 +527,11 @@ export default {
               } else {
                 Toast("控制异常，请确认网络和设备工作是否正常！");
               }
-            }, 100);
+            }, 300);
           } else {
-            this.startCookie(macId, iotMacModelId, this.recipeId);
+            // alert('1233');
+            this.startCookie(macId, iotMacModelId, this.recipeId, totaltime);
+
             setTimeout(() => {
               if (this.code.code == 0 || this.code.code == 9500) {
                 this.$router.push({
@@ -352,7 +547,7 @@ export default {
                 Toast("控制异常，请确认网络和设备工作是否正常！");
               }
             }),
-              100;
+              300;
           }
           return false;
         }
@@ -389,7 +584,7 @@ export default {
       } else if (this.recipeId != recipeid) {
         if (status == "待机") {
           if (type == "智能牛排机") {
-            this.startCookie(macId, iotMacModelId, this.recipeId);
+            this.startCookie(macId, iotMacModelId, this.recipeId, totaltime);
             setTimeout(() => {
               if (this.code.code == 0 || this.code.code == 9500) {
                 this.$router.push({
@@ -404,9 +599,9 @@ export default {
               } else {
                 Toast("控制异常，请确认网络和设备工作是否正常！");
               }
-            }, 500);
+            }, 1000);
           } else {
-            this.startCookie(macId, iotMacModelId, this.recipeId);
+            this.startCookie(macId, iotMacModelId, this.recipeId, totaltime);
             setTimeout(() => {
               if (this.code.code == 0 || this.code.code == 9500) {
                 this.$router.push({
@@ -429,7 +624,11 @@ export default {
   },
   mounted() {
     this.sharUrl = getShareUrl();
-    this.handleShareHide();
+    this.getRecipeData();
+    setTimeout(() => {
+      this.getRecipeData();
+      this.handleShareHide();
+    }, 300);
     let userToken;
     let userData = JSON.parse(localStorage.getItem("userData"));
     if (userData == null) {
@@ -567,6 +766,16 @@ export default {
           height: 3rem;
           font-size: 1.4rem;
           color: #4a4a4a 100%;
+          width: 100%;
+          position: relative;
+          span {
+            width: 80%;
+            font-size: 1.4rem;
+            display: inline-block;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+          }
           font {
             float: right;
             margin-right: 3rem;
@@ -665,13 +874,36 @@ export default {
   }
   .van-popup {
     position: fixed !important;
-    border-radius: 1.2rem;
+    // border-radius: 1.2rem;
+  }
+  .footer {
+    height: 5rem;
+    color: #4a4a4a;
+    display: flex;
+    letter-spacing: -0.41px;
+    line-height: 5rem;
+    border-top: 1rem solid #f7f7f7;
+    font-size: 1.6rem;
+    text-align: center;
+
+    span {
+      font-size: 1.6rem;
+      display: inline-block;
+      flex: 1;
+    }
+    span:nth-child(1) {
+      color: #3cadff;
+      border-right: 0.5px solid #ccc;
+    }
   }
   .equipment-popup {
     width: 30rem;
+    margin: 0 auto;
     height: auto;
+    bottom: 0;
     padding: 1rem 0;
     background-color: #fff;
+
     .header {
       text-align: center;
       font-size: 1.4rem;
@@ -686,35 +918,51 @@ export default {
       line-height: 4rem;
       width: 100%;
     }
-    .footer {
-      height: 4rem;
-      color: #4a4a4a;
-      letter-spacing: -0.41px;
-      line-height: 5rem;
-      font-size: 1.6rem;
-      text-align: center;
-    }
+
     ul {
       li {
         padding: 1rem 0;
         border-bottom: 0.5px solid #e7e2e5;
+        height: 5rem;
+        width: 100%;
+        position: relative;
         a {
           display: flex;
+          width: 100%;
+
           padding: 0 1rem;
+          .choose {
+            float: left;
+            padding-right: 1rem;
+            margin-top: 1rem;
+          }
           .container {
             padding-left: 1rem;
             font-size: 1.4rem;
+            line-height: 5rem;
+            vertical-align: middle;
             span {
               color: #4a4a4a;
               display: block;
-              line-height: 2.5rem;
+              margin-top: 1rem;
+              line-height: 3rem;
+
               font-size: 1.4rem;
             }
-            .status {
-              color: #898989;
-              letter-spacing: -0.34px;
-              font-size: 1.2rem;
-            }
+          }
+          .status {
+            color: #898989;
+            letter-spacing: -0.34px;
+            font-size: 1.4rem;
+            line-height: 5rem;
+            flex: 1;
+            position: absolute;
+            right: 0;
+            color: #4a4a4a;
+            padding-right: 2rem;
+            text-align: right;
+            display: inline-block;
+            float: right !important;
           }
           img {
             width: 5rem;
@@ -725,4 +973,28 @@ export default {
     }
   }
 }
+.bg-pop {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+}
+.p-time {
+  position: relative;
+  bottom: 0;
+  overflow: hidden;
+  border: 1px solid red;
+}
+.checlass {
+  // display: inline-block;
+  // width: 100%;
+  // position:absolute;
+  // right:0;
+}
+.van-popup--bottom {
+  top: auto !important;
+}
 </style>
+

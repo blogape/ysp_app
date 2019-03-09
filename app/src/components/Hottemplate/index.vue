@@ -1,43 +1,48 @@
 <template>
-<!-- 热门食谱 -->
-    <div class="hotrecipe">
-        <router-link :to="({name:'Product',params:{id:data.id}})" class="main">
-            <div class="recipename">
-                    {{data.title}}
-            </div>
-              <!-- 作者 -->
-            <div class="author">
-                <span>
-                <img :src="data.headimg"/>
-                </span>
-                    <!-- nikename -->
-                <div class="name">
-                    {{data.nickname}}
-                </div>
-                <div class="right">
-                    <ul>
-                        <li>
-                    <i class="icon iconfont icon-chakan"></i>{{data.readCount}}
-                        </li>
-                        <li>
-                        <i class="icon iconfont icon-wujiaoxingkong"></i>{{data.collectCount}}
-                        </li>
-                    </ul>
-                </div>
-            </div>
-            <div class="img">
-                <img :src="data.coverimg"/>
-            </div>
-          
- </router-link>    </div>
+  <!-- 热门食谱 -->
+  <div class="hotrecipe">
+    <router-link :to="({name:'Product',params:{id:data.id}})" class="main">
+      <div class="recipename">{{data.title}}</div>
+      <!-- 作者 -->
+      <div class="author">
+        <span>
+          <Img :src="data.headimg"/>
+        </span>
+        <!-- nikename -->
+        <div class="name">{{data.nickname}}</div>
+        <div class="right">
+          <ul>
+            <li>
+              <i class="icon iconfont icon-chakan"></i>
+              {{data.readCount}}
+            </li>
+            <li>
+              <i class="icon iconfont icon-wujiaoxingkong"></i>
+              {{data.collectCount}}
+            </li>
+          </ul>
+        </div>
+      </div>
+      <div class="img">
+        <span>
+          <TemplateImg :msg="data.coverimg"></TemplateImg>
+        </span>
+      </div>
+    </router-link>
+  </div>
 </template>
 
 <script>
+import TemplateImg from "../../components/Img/";
+
 export default {
   props: {
     data: {
       type: Object
     }
+  },
+  components: {
+    TemplateImg
   }
 };
 </script>
@@ -47,11 +52,14 @@ export default {
   padding: 1rem;
   border-radius: 3px;
   overflow: hidden;
+  // display: table;
+
   border-bottom: 0.5px solid #eaeaea;
   padding-bottom: 1rem;
   .main {
     width: 100%;
-    display: inline-block;
+    position: relative;
+
     .recipename {
       color: #4a4a4a;
       font-size: 1.6rem;
@@ -59,9 +67,19 @@ export default {
     }
     .img {
       overflow: hidden;
+      position: relative;
+      width: 100%;
       height: 20rem;
-      img {
+      span {
+        vertical-align: middle;
+        display: inline-block;
         width: 100%;
+        margin-top: -1rem;
+        text-align: center;
+        vertical-align: middle;
+        img {
+          width: 100%;
+        }
       }
     }
     .author {
@@ -76,6 +94,7 @@ export default {
         vertical-align: middle;
         float: left;
         width: auto;
+
         border-radius: 50%;
       }
       .name {
